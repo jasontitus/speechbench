@@ -1,0 +1,31 @@
+{
+  "run_id": "comparison",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 5,
+  "datasets": [
+    "librispeech_clean"
+  ],
+  "models": [
+    "gemma-4-E4B-it",
+    "parakeet-tdt-0.6b-v2",
+    "qwen3-asr-1.7b",
+    "whisper-large-v3-turbo",
+    "whisper-tiny.en"
+  ],
+  "best_per_dataset": {
+    "librispeech_clean": {
+      "best_wer": {
+        "model": "whisper-tiny.en",
+        "wer": 0.0
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v2",
+        "rtfx_mean": 48.622070354572905
+      },
+      "smallest_gpu": {
+        "model": "whisper-tiny.en",
+        "gpu_peak_mem_mb": 0.0
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "job_id": "91d51f95a683",
+  "model_key": "parakeet-rnnt-1.1b",
+  "dataset_key": "librispeech_clean",
+  "sample_cap": 1,
+  "failed": true,
+  "error": "Could not load libtorchcodec. Likely causes:\n          1. FFmpeg is not properly installed in your environment. We support\n             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec\n             for each of those versions. Errors for versions not installed on\n             your system are expected; only the error for your installed FFmpeg\n             version is relevant. On Windows, ensure you've installed the\n             \"full-shared\" version which ships DLLs.\n          2. The PyTorch version (2.7.1+cu128) is not compatible with\n             this version of TorchCodec. Refer to the version compatibility\n             table:\n             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.\n          3. Another runtime dependency; see exceptions below.\n\n        The following exceptions were raised as we tried to load libtorchcodec:\n        \n[start of libtorchcodec loading traceback]\nFFmpeg version 8:\nTraceback (most recent call last):\n  File"
+}

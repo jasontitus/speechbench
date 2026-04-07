@@ -1,0 +1,10 @@
+{
+  "model_key": "gemma-4-E4B-it",
+  "model_id": "google/gemma-4-E4B-it",
+  "failed": true,
+  "stage": "load",
+  "error": "unable to mmap 15992595884 bytes from file </root/.cache/huggingface/hub/models--google--gemma-4-E4B-it/snapshots/292a7e278a400932df35f9fd4b1501edd04133a5/model.safetensors>: Cannot allocate memory (12)",
+  "job_id": "7a60ae647a73",
+  "dataset_key": "librispeech_clean",
+  "sample_cap": 10
+}

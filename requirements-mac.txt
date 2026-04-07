@@ -1,0 +1,44 @@
+# speechbench Mac (Apple Silicon) dependencies.
+#
+# Used by `speechbench run --local` on macOS. Heavy CUDA-only deps (NeMo,
+# faster-whisper CT2, transformers torch.cuda code paths) are NOT installed.
+
+# MLX backbone (only used for Whisper + Qwen3-ASR — Parakeet uses NeMo)
+mlx>=0.18.0
+mlx-whisper>=0.4.3
+mlx-qwen3-asr>=0.3.0
+
+# Parakeet on Mac — uses the upstream NVIDIA NeMo package directly. This works
+# on Apple Silicon (CPU mode) and is what ScribeBox uses today for the 1.1B
+# variants. The install is heavy (~5 min) but reliable.
+nemo_toolkit[asr]>=2.7.0
+
+# HF stack — only used for Gemma 4 best-effort path on MPS, and for the
+# datasets loader (we pin <4 to avoid the torchcodec hard requirement that
+# bites us on the GCP DLVM image too).
+transformers>=4.50.0
+torch>=2.4.0
+sentencepiece>=0.2.0
+safetensors>=0.4.3
+accelerate>=0.30.0
+
+# Datasets + audio
+datasets>=3.0,<4.0
+soundfile>=0.12.1
+librosa>=0.10.2
+
+# Eval / metrics
+jiwer>=3.0.4
+psutil>=6.0.0
+numpy>=1.26
+tqdm>=4.66
+tabulate>=0.9.0
+
+# DashScope (Qwen3.5-Omni API — works from any machine)
+openai>=1.40.0
+
+# Local CLI deps (already in pyproject.toml but listed here so a single
+# `pip install -r requirements-mac.txt` is enough)
+click>=8.1
+google-cloud-storage>=2.14
+pyyaml>=6.0

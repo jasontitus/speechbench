@@ -1,0 +1,39 @@
+{
+  "run_id": "smoketest",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 13,
+  "datasets": [
+    "librispeech_clean"
+  ],
+  "models": [
+    "gemma-4-E2B-it",
+    "gemma-4-E4B-it",
+    "parakeet-ctc-0.6b",
+    "parakeet-ctc-1.1b",
+    "parakeet-rnnt-0.6b",
+    "parakeet-rnnt-1.1b",
+    "parakeet-tdt-0.6b-v2",
+    "parakeet-tdt-0.6b-v3",
+    "parakeet-tdt-1.1b",
+    "qwen3-asr-1.7b",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo"
+  ],
+  "best_per_dataset": {
+    "librispeech_clean": {
+      "best_wer": {
+        "model": "whisper-large-v2",
+        "wer": 0.0
+      },
+      "fastest_rtfx": {
+        "model": "whisper-large-v3-turbo",
+        "rtfx_mean": 7.660547789592602
+      },
+      "smallest_gpu": {
+        "model": "parakeet-ctc-0.6b",
+        "gpu_peak_mem_mb": 0.0
+      }
+    }
+  }
+}

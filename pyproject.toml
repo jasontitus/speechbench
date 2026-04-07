@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "speechbench"
+version = "0.1.0"
+description = "ASR benchmark suite — runs WER/RTFx/GPU memory benchmarks across many models on GCP spot GPU instances."
+requires-python = ">=3.10"
+authors = [{ name = "Jason Titus" }]
+
+# These are the *local* (laptop) dependencies needed to run the orchestrator
+# and the report generator. Heavy ML dependencies (torch, transformers, nemo,
+# faster-whisper, ...) are listed in requirements-vm.txt and installed on the
+# GPU VM only.
+dependencies = [
+    "click>=8.1",
+    "google-cloud-storage>=2.14",
+    "tabulate>=0.9",
+    "tqdm>=4.66",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+speechbench = "speechbench.cli:cli"
+
+[tool.setuptools.packages.find]
+include = ["speechbench*"]
+exclude = ["tests*", "scripts*"]
+
+[tool.setuptools.package-data]
+speechbench = ["startup.sh", "../requirements-vm.txt"]

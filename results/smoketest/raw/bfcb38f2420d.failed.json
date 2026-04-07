@@ -1,0 +1,10 @@
+{
+  "model_key": "gemma-4-E4B-it",
+  "model_id": "google/gemma-4-E4B-it",
+  "failed": true,
+  "stage": "load",
+  "error": "Unrecognized processing class in google/gemma-4-E4B-it. Can't instantiate a processor, a tokenizer, an image processor or a feature extractor for this model. Make sure the repository contains the files of at least one of those processing classes.",
+  "job_id": "bfcb38f2420d",
+  "dataset_key": "librispeech_clean",
+  "sample_cap": 1
+}

@@ -1,0 +1,11 @@
+{
+  "run_id": "macgemma",
+  "jobs": [
+    {
+      "job_id": "bfcb38f2420d",
+      "model_key": "gemma-4-E4B-it",
+      "dataset_key": "librispeech_clean",
+      "sample_cap": 1
+    }
+  ]
+}

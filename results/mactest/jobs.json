@@ -1,0 +1,35 @@
+{
+  "run_id": "mactest",
+  "jobs": [
+    {
+      "job_id": "a0d66a9c1564",
+      "model_key": "whisper-tiny.en",
+      "dataset_key": "librispeech_clean",
+      "sample_cap": 2
+    },
+    {
+      "job_id": "fd0c8b2f107b",
+      "model_key": "whisper-base.en",
+      "dataset_key": "librispeech_clean",
+      "sample_cap": 2
+    },
+    {
+      "job_id": "a81be4368c7a",
+      "model_key": "whisper-large-v3-turbo",
+      "dataset_key": "librispeech_clean",
+      "sample_cap": 2
+    },
+    {
+      "job_id": "c9e2434bf5eb",
+      "model_key": "parakeet-tdt-0.6b-v2",
+      "dataset_key": "librispeech_clean",
+      "sample_cap": 2
+    },
+    {
+      "job_id": "c8bfdf1f1549",
+      "model_key": "parakeet-ctc-0.6b",
+      "dataset_key": "librispeech_clean",
+      "sample_cap": 2
+    }
+  ]
+}
