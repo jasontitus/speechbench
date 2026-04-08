@@ -30,3 +30,6 @@ env/
 
 # Per-VM tarballs we may build for debugging
 src-*.tar.gz
+
+# Firebase Hosting local cache (not needed in the repo)
+web/.firebase/
