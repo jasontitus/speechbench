@@ -193,6 +193,17 @@ DATASETS: dict[str, DatasetSpec] = {
         requires_auth=True,
         description="SPGISpeech — financial filings audio. Gated.",
     ),
+    "common_voice_22_en": DatasetSpec(
+        key="common_voice_22_en",
+        hf_dataset="fsicoli/common_voice_22_0",
+        hf_config="en",
+        split="test",
+        text_field="sentence",
+        default_cap=300,
+        language="english",
+        description="Common Voice 22 — English. Crowd-sourced read speech "
+                    "(diverse speakers/accents). fsicoli mirror on HF.",
+    ),
     # ─── Spanish ──────────────────────────────────────────────────────────
     "mls_es": DatasetSpec(
         key="mls_es",
@@ -224,16 +235,47 @@ DATASETS: dict[str, DatasetSpec] = {
         language="spanish",
         description="FLEURS Spanish (es_419) — 102-language multilingual ASR benchmark.",
     ),
-    "common_voice_17_es": DatasetSpec(
-        key="common_voice_17_es",
-        hf_dataset="mozilla-foundation/common_voice_17_0",
+    "common_voice_22_es": DatasetSpec(
+        key="common_voice_22_es",
+        hf_dataset="fsicoli/common_voice_22_0",
         hf_config="es",
         split="test",
         text_field="sentence",
         default_cap=300,
         language="spanish",
-        requires_auth=True,
-        description="Common Voice 17 — Spanish. Crowd-sourced read speech. Gated (needs HF token).",
+        description="Common Voice 22 — Spanish. Crowd-sourced read speech. "
+                    "fsicoli mirror (Mozilla moved official CV off HF in Oct 2025).",
+    ),
+    # ─── Lithuanian ───────────────────────────────────────────────────────
+    "voxpopuli_lt": DatasetSpec(
+        key="voxpopuli_lt",
+        hf_dataset="facebook/voxpopuli",
+        hf_config="lt",
+        split="test",
+        text_field="normalized_text",
+        default_cap=300,
+        language="lithuanian",
+        description="VoxPopuli — European parliament speeches in Lithuanian.",
+    ),
+    "fleurs_lt": DatasetSpec(
+        key="fleurs_lt",
+        hf_dataset="google/fleurs",
+        hf_config="lt_lt",
+        split="test",
+        text_field="transcription",
+        default_cap=300,
+        language="lithuanian",
+        description="FLEURS Lithuanian (lt_lt) — 102-language multilingual ASR benchmark.",
+    ),
+    "common_voice_22_lt": DatasetSpec(
+        key="common_voice_22_lt",
+        hf_dataset="fsicoli/common_voice_22_0",
+        hf_config="lt",
+        split="test",
+        text_field="sentence",
+        default_cap=300,
+        language="lithuanian",
+        description="Common Voice 22 — Lithuanian. Crowd-sourced read speech.",
     ),
 }
 

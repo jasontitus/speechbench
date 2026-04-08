@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-08T05:46:00Z",
+  "generated_at": "2026-04-08T05:57:12Z",
   "source_repo": "https://github.com/jasontitus/speechbench",
   "hardware": "GCP spot Tesla T4 (n1-standard-8, 30 GB RAM, us-central1-a)",
   "project": "safecare-maps",
@@ -12,13 +12,13 @@
     },
     "librispeech_other": {
       "title": "LibriSpeech test-other",
-      "description": "Harder variant of LibriSpeech with noisier recordings. 2,939 clips total.",
+      "description": "Harder variant of LibriSpeech with noisier recordings.",
       "url": "https://huggingface.co/datasets/openslr/librispeech_asr",
       "language": "english"
     },
     "ami_ihm": {
       "title": "AMI IHM test",
-      "description": "Multi-speaker meeting audio via individual headset microphones \u2014 the hardest realistic benchmark in this sweep.",
+      "description": "Multi-speaker meeting audio via individual headset mics \u2014 the hardest realistic benchmark in this sweep.",
       "url": "https://huggingface.co/datasets/edinburghcstr/ami",
       "language": "english"
     },
@@ -30,13 +30,13 @@
     },
     "voxpopuli_en": {
       "title": "VoxPopuli en test",
-      "description": "European Parliament speeches in English. Formal/prepared speech with some accent variety.",
+      "description": "European Parliament speeches in English.",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
       "language": "english"
     },
     "mls_es": {
       "title": "MLS Spanish",
-      "description": "Multilingual LibriSpeech \u2014 Spanish test set (Spanish audiobooks).",
+      "description": "Multilingual LibriSpeech \u2014 Spanish test set (audiobooks).",
       "url": "https://huggingface.co/datasets/facebook/multilingual_librispeech",
       "language": "spanish"
     },
@@ -51,6 +51,24 @@
       "description": "Google's 102-language multilingual ASR benchmark \u2014 Latin American Spanish.",
       "url": "https://huggingface.co/datasets/google/fleurs",
       "language": "spanish"
+    },
+    "voxpopuli_lt": {
+      "title": "VoxPopuli lt test",
+      "description": "European Parliament speeches in Lithuanian.",
+      "url": "https://huggingface.co/datasets/facebook/voxpopuli",
+      "language": "lithuanian"
+    },
+    "fleurs_lt": {
+      "title": "FLEURS Lithuanian (lt_lt)",
+      "description": "Google's 102-language multilingual ASR benchmark \u2014 Lithuanian.",
+      "url": "https://huggingface.co/datasets/google/fleurs",
+      "language": "lithuanian"
+    },
+    "common_voice_22_lt": {
+      "title": "Common Voice 22 \u2014 Lithuanian",
+      "description": "Crowd-sourced read speech. fsicoli mirror on HF (Mozilla moved official CV off HF Oct 2025).",
+      "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
+      "language": "lithuanian"
     }
   },
   "languages": {
@@ -1872,6 +1890,17 @@
         "mls_es",
         "voxpopuli_es",
         "fleurs_es"
+      ]
+    },
+    "lt": {
+      "label": "Lietuvi\u0173",
+      "run_id": "lt",
+      "sample_cap": 30,
+      "results": {},
+      "dataset_order": [
+        "voxpopuli_lt",
+        "fleurs_lt",
+        "common_voice_22_lt"
       ]
     }
   }

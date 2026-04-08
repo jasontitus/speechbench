@@ -226,6 +226,11 @@ class MLXWhisperModel(ASRModel):
             "spanish": "es",
             "french": "fr",
             "german": "de",
+            "lithuanian": "lt",
+            "portuguese": "pt",
+            "italian": "it",
+            "dutch": "nl",
+            "polish": "pl",
         }.get(language, language[:2] if len(language) >= 2 else "en")
         result = mlx_whisper.transcribe(
             audio,
@@ -339,6 +344,11 @@ class FasterWhisperModel(ASRModel):
             "spanish": "es",
             "french": "fr",
             "german": "de",
+            "lithuanian": "lt",
+            "portuguese": "pt",
+            "italian": "it",
+            "dutch": "nl",
+            "polish": "pl",
         }.get(language, language[:2] if len(language) >= 2 else "en")
         segments, _info = self._model.transcribe(
             audio,
