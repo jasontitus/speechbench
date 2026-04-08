@@ -44,6 +44,7 @@
       "Helvetica Neue", Arial, sans-serif;
     font-size: 15px;
     line-height: 1.5;
+    overflow-x: hidden;
   }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -110,8 +111,23 @@
     font-size: 14px;
     margin: 4px 0 0 0;
   }
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Scrollbar hint on iOS/macOS: a subtle shadow on the right edge when
+       there's more content off-screen. */
+    background:
+      linear-gradient(to right, var(--panel) 30%, transparent),
+      linear-gradient(to right, transparent, var(--panel) 70%) right,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.15), transparent),
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.15), transparent) right;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 16px 100%, 16px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
   table {
     width: 100%;
+    min-width: 760px;
     border-collapse: collapse;
     font-size: 13px;
   }
@@ -141,6 +157,17 @@
   tbody tr:hover { background: var(--panel-2); }
   tbody tr.best td.num.wer { color: var(--green); font-weight: 600; }
   tbody tr.hallucinate td.num.wer { color: var(--red); font-weight: 600; }
+  @media (max-width: 720px) {
+    header { padding: 28px 16px 12px 16px; }
+    header h1 { font-size: 24px; }
+    main { padding: 0 16px 48px 16px; }
+    th, td { padding: 8px 10px; font-size: 12px; }
+    th:first-child, td:first-child { padding-left: 14px; }
+    th:last-child, td:last-child { padding-right: 14px; }
+    section.dataset header.ds-header { padding: 16px; }
+    section.dataset h2 { font-size: 17px; }
+    section.dataset h2 .ds-key { display: block; margin: 2px 0 0 0; }
+  }
   .backend-tag {
     display: inline-block;
     padding: 1px 6px;
@@ -266,6 +293,8 @@ function buildDatasetSection(key, spec, rows) {
   header.appendChild(desc);
   section.appendChild(header);
 
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "table-scroll";
   const table = document.createElement("table");
   const thead = document.createElement("thead");
   const trh = document.createElement("tr");
@@ -315,7 +344,8 @@ function buildDatasetSection(key, spec, rows) {
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
-  section.appendChild(table);
+  tableWrap.appendChild(table);
+  section.appendChild(tableWrap);
 
   // click-to-sort
   thead.querySelectorAll("th").forEach((th) => {
