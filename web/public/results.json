@@ -1,37 +1,61 @@
 {
-  "generated_at": "2026-04-08T18:39:01Z",
+  "generated_at": "2026-04-08T23:24:07Z",
   "source_repo": "https://github.com/jasontitus/speechbench",
   "hardware": "GCP spot Tesla T4 (n1-standard-8, 30 GB RAM)",
   "project": "safecare-maps",
   "datasets": {
     "librispeech_clean": {
       "title": "LibriSpeech test-clean",
-      "description": "Standard read-speech benchmark. 2,620 clips, clean audiobook narration.",
+      "description": "LibriSpeech test-clean \u2014 clean read speech.",
       "url": "https://huggingface.co/datasets/openslr/librispeech_asr",
       "language": "english"
     },
     "librispeech_other": {
       "title": "LibriSpeech test-other",
-      "description": "Harder variant of LibriSpeech with noisier recordings.",
+      "description": "LibriSpeech test-other \u2014 harder read speech.",
       "url": "https://huggingface.co/datasets/openslr/librispeech_asr",
       "language": "english"
     },
     "ami_ihm": {
       "title": "AMI IHM test",
-      "description": "Multi-speaker meeting audio via individual headset mics \u2014 the hardest realistic benchmark in this sweep.",
+      "description": "AMI IHM test \u2014 meeting/conversation, headset mic.",
       "url": "https://huggingface.co/datasets/edinburghcstr/ami",
       "language": "english"
     },
     "earnings22": {
       "title": "Earnings22 test",
-      "description": "Financial earnings calls \u2014 long-form, accented, domain-specific vocabulary.",
+      "description": "Earnings22 \u2014 earnings call recordings (chunked ~20s).",
       "url": "https://huggingface.co/datasets/distil-whisper/earnings22",
+      "language": "english"
+    },
+    "tedlium_longform": {
+      "title": "tedlium_longform",
+      "description": "TED-LIUM long-form \u2014 long-form lectures (11 speakers).",
+      "url": "https://huggingface.co/datasets/distil-whisper/tedlium-long-form",
       "language": "english"
     },
     "voxpopuli_en": {
       "title": "VoxPopuli en test",
-      "description": "European Parliament speeches in English.",
+      "description": "VoxPopuli \u2014 European parliament speeches (English).",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
+      "language": "english"
+    },
+    "gigaspeech_l": {
+      "title": "gigaspeech_l",
+      "description": "GigaSpeech L \u2014 multi-domain (audiobooks/podcasts/YouTube). Gated.",
+      "url": "https://huggingface.co/datasets/speechcolab/gigaspeech",
+      "language": "english"
+    },
+    "spgispeech": {
+      "title": "spgispeech",
+      "description": "SPGISpeech \u2014 financial filings audio. Gated.",
+      "url": "https://huggingface.co/datasets/kensho/spgispeech",
+      "language": "english"
+    },
+    "common_voice_22_en": {
+      "title": "Common Voice 22 \u2014 English",
+      "description": "Common Voice 22 \u2014 English. Crowd-sourced read speech (diverse speakers/accents). fsicoli mirror on HF.",
+      "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
       "language": "english"
     },
     "mls_es": {
@@ -42,31 +66,37 @@
     },
     "voxpopuli_es": {
       "title": "VoxPopuli es test",
-      "description": "European Parliament speeches in Spanish.",
+      "description": "VoxPopuli \u2014 European parliament speeches in Spanish.",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
       "language": "spanish"
     },
     "fleurs_es": {
       "title": "FLEURS Spanish (es_419)",
-      "description": "Google's 102-language multilingual ASR benchmark \u2014 Latin American Spanish.",
+      "description": "FLEURS Spanish (es_419) \u2014 102-language multilingual ASR benchmark.",
       "url": "https://huggingface.co/datasets/google/fleurs",
+      "language": "spanish"
+    },
+    "common_voice_22_es": {
+      "title": "Common Voice 22 \u2014 Spanish",
+      "description": "Common Voice 22 \u2014 Spanish. Crowd-sourced read speech. fsicoli mirror (Mozilla moved official CV off HF in Oct 2025).",
+      "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
       "language": "spanish"
     },
     "voxpopuli_lt": {
       "title": "VoxPopuli lt test",
-      "description": "European Parliament speeches in Lithuanian.",
+      "description": "VoxPopuli \u2014 European parliament speeches in Lithuanian.",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
       "language": "lithuanian"
     },
     "fleurs_lt": {
       "title": "FLEURS Lithuanian (lt_lt)",
-      "description": "Google's 102-language multilingual ASR benchmark \u2014 Lithuanian.",
+      "description": "FLEURS Lithuanian (lt_lt) \u2014 102-language multilingual ASR benchmark.",
       "url": "https://huggingface.co/datasets/google/fleurs",
       "language": "lithuanian"
     },
     "common_voice_22_lt": {
       "title": "Common Voice 22 \u2014 Lithuanian",
-      "description": "Crowd-sourced read speech. fsicoli mirror on HF (Mozilla moved official CV off HF Oct 2025).",
+      "description": "Common Voice 22 \u2014 Lithuanian. Crowd-sourced read speech.",
       "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
       "language": "lithuanian"
     }
@@ -74,13 +104,11 @@
   "languages": {
     "en": {
       "label": "English",
-      "run_id": "full",
       "sample_cap": 30,
       "results": {
         "ami_ihm": [
           {
             "model_key": "parakeet-ctc-1.1b",
-            "model_id": "nvidia/parakeet-ctc-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -93,11 +121,11 @@
             "latency_ms_p90": 201.62572860717773,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 5.775694370269775,
+            "model_id": "nvidia/parakeet-ctc-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-1.1b"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -110,11 +138,11 @@
             "latency_ms_p90": 122.17650413513185,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 3.7775726318359375,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "fw-distil-large-v3",
-            "model_id": "distil-large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -127,11 +155,11 @@
             "latency_ms_p90": 356.60316944122314,
             "gpu_peak_mem_mb": 224.0,
             "wall_time_s": 10.988083124160767,
+            "model_id": "distil-large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -144,11 +172,11 @@
             "latency_ms_p90": 553.0106782913208,
             "gpu_peak_mem_mb": 256.0,
             "wall_time_s": 16.816627264022827,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "parakeet-tdt_ctc-110m",
-            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -161,11 +189,11 @@
             "latency_ms_p90": 1638.971757888794,
             "gpu_peak_mem_mb": 24.0,
             "wall_time_s": 49.4367151260376,
+            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt_ctc-110m"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -178,11 +206,11 @@
             "latency_ms_p90": 22370.750808715824,
             "gpu_peak_mem_mb": 5396.0,
             "wall_time_s": 400.9437086582184,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           },
           {
             "model_key": "parakeet-ctc-0.6b",
-            "model_id": "nvidia/parakeet-ctc-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -195,11 +223,11 @@
             "latency_ms_p90": 122.76675701141357,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 3.9520246982574463,
+            "model_id": "nvidia/parakeet-ctc-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-0.6b"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -212,11 +240,11 @@
             "latency_ms_p90": 1976.6900539398196,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 31.96014094352722,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "whisper-small.en",
-            "model_id": "openai/whisper-small.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -229,11 +257,11 @@
             "latency_ms_p90": 360.4692935943606,
             "gpu_peak_mem_mb": 98.0,
             "wall_time_s": 16.298036098480225,
+            "model_id": "openai/whisper-small.en",
             "model_url": "https://huggingface.co/openai/whisper-small.en"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v2",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -246,11 +274,11 @@
             "latency_ms_p90": 122.85051345825195,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 3.710204601287842,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2"
           },
           {
             "model_key": "whisper-base.en",
-            "model_id": "openai/whisper-base.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -263,11 +291,11 @@
             "latency_ms_p90": 209.05170440673834,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.9004130363464355,
+            "model_id": "openai/whisper-base.en",
             "model_url": "https://huggingface.co/openai/whisper-base.en"
           },
           {
             "model_key": "whisper-tiny.en",
-            "model_id": "openai/whisper-tiny.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -280,11 +308,11 @@
             "latency_ms_p90": 172.54121303558352,
             "gpu_peak_mem_mb": 6.0,
             "wall_time_s": 10.91300654411316,
+            "model_id": "openai/whisper-tiny.en",
             "model_url": "https://huggingface.co/openai/whisper-tiny.en"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -297,11 +325,11 @@
             "latency_ms_p90": 300.1324415206909,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 8.897623062133789,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "parakeet-rnnt-0.6b",
-            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -314,11 +342,11 @@
             "latency_ms_p90": 130.04255294799805,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 3.864964485168457,
+            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-0.6b"
           },
           {
             "model_key": "distil-large-v3",
-            "model_id": "distil-whisper/distil-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -331,11 +359,11 @@
             "latency_ms_p90": 241.75064563751226,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 88.38165831565857,
+            "model_id": "distil-whisper/distil-large-v3",
             "model_url": "https://huggingface.co/distil-whisper/distil-large-v3"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -348,11 +376,11 @@
             "latency_ms_p90": 363.053584098816,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 11.397937059402466,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -365,11 +393,11 @@
             "latency_ms_p90": 1007.5245141983032,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 22.83707284927368,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "parakeet-rnnt-1.1b",
-            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -382,11 +410,11 @@
             "latency_ms_p90": 213.96963596343994,
             "gpu_peak_mem_mb": 2.0,
             "wall_time_s": 5.9010069370269775,
+            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-1.1b"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -399,11 +427,11 @@
             "latency_ms_p90": 1624.2014408111572,
             "gpu_peak_mem_mb": 400.0,
             "wall_time_s": 82.96460580825806,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "whisper-medium.en",
-            "model_id": "openai/whisper-medium.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -416,11 +444,11 @@
             "latency_ms_p90": 722.1655130386357,
             "gpu_peak_mem_mb": 224.0,
             "wall_time_s": 82.47923564910889,
+            "model_id": "openai/whisper-medium.en",
             "model_url": "https://huggingface.co/openai/whisper-medium.en"
           },
           {
             "model_key": "parakeet-tdt-1.1b",
-            "model_id": "nvidia/parakeet-tdt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -433,13 +461,13 @@
             "latency_ms_p90": 154.78019714355474,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 5.041867017745972,
+            "model_id": "nvidia/parakeet-tdt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-1.1b"
           }
         ],
         "voxpopuli_en": [
           {
             "model_key": "parakeet-tdt_ctc-110m",
-            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -452,11 +480,11 @@
             "latency_ms_p90": 1691.855502128601,
             "gpu_peak_mem_mb": 50.0,
             "wall_time_s": 65.56273579597473,
+            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt_ctc-110m"
           },
           {
             "model_key": "parakeet-rnnt-1.1b",
-            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -469,11 +497,11 @@
             "latency_ms_p90": 258.4147691726685,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 151.9740345478058,
+            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-1.1b"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -486,11 +514,11 @@
             "latency_ms_p90": 71971.8423128128,
             "gpu_peak_mem_mb": 5474.0,
             "wall_time_s": 1350.858844280243,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v2",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -503,11 +531,11 @@
             "latency_ms_p90": 166.57035350799566,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 16.80491542816162,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2"
           },
           {
             "model_key": "whisper-tiny.en",
-            "model_id": "openai/whisper-tiny.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -520,11 +548,11 @@
             "latency_ms_p90": 382.0827007293702,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 20.69661545753479,
+            "model_id": "openai/whisper-tiny.en",
             "model_url": "https://huggingface.co/openai/whisper-tiny.en"
           },
           {
             "model_key": "parakeet-tdt-1.1b",
-            "model_id": "nvidia/parakeet-tdt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -537,11 +565,11 @@
             "latency_ms_p90": 296.73194885253906,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 31.063034296035767,
+            "model_id": "nvidia/parakeet-tdt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-1.1b"
           },
           {
             "model_key": "whisper-base.en",
-            "model_id": "openai/whisper-base.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -554,11 +582,11 @@
             "latency_ms_p90": 485.10730266571056,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 23.110017776489258,
+            "model_id": "openai/whisper-base.en",
             "model_url": "https://huggingface.co/openai/whisper-base.en"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -571,11 +599,11 @@
             "latency_ms_p90": 1148.492670059204,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 39.19060039520264,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-medium.en",
-            "model_id": "openai/whisper-medium.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -588,11 +616,11 @@
             "latency_ms_p90": 1781.2505006790163,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 59.43177556991577,
+            "model_id": "openai/whisper-medium.en",
             "model_url": "https://huggingface.co/openai/whisper-medium.en"
           },
           {
             "model_key": "parakeet-ctc-0.6b",
-            "model_id": "nvidia/parakeet-ctc-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -605,11 +633,11 @@
             "latency_ms_p90": 131.68723583221438,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 15.73962140083313,
+            "model_id": "nvidia/parakeet-ctc-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-0.6b"
           },
           {
             "model_key": "parakeet-ctc-1.1b",
-            "model_id": "nvidia/parakeet-ctc-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -622,11 +650,11 @@
             "latency_ms_p90": 254.540228843689,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 79.03910875320435,
+            "model_id": "nvidia/parakeet-ctc-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-1.1b"
           },
           {
             "model_key": "distil-large-v3",
-            "model_id": "distil-whisper/distil-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -639,11 +667,11 @@
             "latency_ms_p90": 450.5954742431641,
             "gpu_peak_mem_mb": 2.0,
             "wall_time_s": 23.139299154281616,
+            "model_id": "distil-whisper/distil-large-v3",
             "model_url": "https://huggingface.co/distil-whisper/distil-large-v3"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -656,11 +684,11 @@
             "latency_ms_p90": 3616.762852668762,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 83.3163583278656,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -673,11 +701,11 @@
             "latency_ms_p90": 504.0384531021118,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 26.80751371383667,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -690,11 +718,11 @@
             "latency_ms_p90": 168.55072975158697,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 16.813381910324097,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "parakeet-rnnt-0.6b",
-            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -707,11 +735,11 @@
             "latency_ms_p90": 170.12174129486087,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 16.66351342201233,
+            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-0.6b"
           },
           {
             "model_key": "fw-distil-large-v3",
-            "model_id": "distil-large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -724,11 +752,11 @@
             "latency_ms_p90": 458.030915260315,
             "gpu_peak_mem_mb": 224.0,
             "wall_time_s": 26.319385290145874,
+            "model_id": "distil-large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -741,11 +769,11 @@
             "latency_ms_p90": 2649.3996620178227,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 69.18158435821533,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "whisper-small.en",
-            "model_id": "openai/whisper-small.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -758,11 +786,11 @@
             "latency_ms_p90": 854.3265581130983,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 97.2986056804657,
+            "model_id": "openai/whisper-small.en",
             "model_url": "https://huggingface.co/openai/whisper-small.en"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -775,11 +803,11 @@
             "latency_ms_p90": 2720.417928695679,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 90.87137150764465,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -792,13 +820,13 @@
             "latency_ms_p90": 595.2195405960083,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 47.55862021446228,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           }
         ],
         "librispeech_clean": [
           {
             "model_key": "parakeet-tdt-0.6b-v2",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -811,11 +839,11 @@
             "latency_ms_p90": 382.28054046630865,
             "gpu_peak_mem_mb": 164.0,
             "wall_time_s": 8.348075151443481,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -828,11 +856,11 @@
             "latency_ms_p90": 189.6042585372925,
             "gpu_peak_mem_mb": 164.0,
             "wall_time_s": 6.76031494140625,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "fw-distil-large-v3",
-            "model_id": "distil-large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -845,11 +873,11 @@
             "latency_ms_p90": 423.7621068954468,
             "gpu_peak_mem_mb": 296.0,
             "wall_time_s": 12.239801406860352,
+            "model_id": "distil-large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-tiny.en",
-            "model_id": "openai/whisper-tiny.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -862,11 +890,11 @@
             "latency_ms_p90": 443.46349239349365,
             "gpu_peak_mem_mb": 92.0,
             "wall_time_s": 8.47927737236023,
+            "model_id": "openai/whisper-tiny.en",
             "model_url": "https://huggingface.co/openai/whisper-tiny.en"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -879,11 +907,11 @@
             "latency_ms_p90": 2863.169765472412,
             "gpu_peak_mem_mb": 1448.0,
             "wall_time_s": 51.493290185928345,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "parakeet-ctc-1.1b",
-            "model_id": "nvidia/parakeet-ctc-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -896,11 +924,11 @@
             "latency_ms_p90": 267.760443687439,
             "gpu_peak_mem_mb": 100.0,
             "wall_time_s": 7.670066595077515,
+            "model_id": "nvidia/parakeet-ctc-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-1.1b"
           },
           {
             "model_key": "whisper-medium.en",
-            "model_id": "openai/whisper-medium.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -913,11 +941,11 @@
             "latency_ms_p90": 2162.1188163757324,
             "gpu_peak_mem_mb": 900.0,
             "wall_time_s": 105.58206677436829,
+            "model_id": "openai/whisper-medium.en",
             "model_url": "https://huggingface.co/openai/whisper-medium.en"
           },
           {
             "model_key": "distil-large-v3",
-            "model_id": "distil-whisper/distil-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -930,11 +958,11 @@
             "latency_ms_p90": 449.6802806854248,
             "gpu_peak_mem_mb": 188.0,
             "wall_time_s": 10.483956575393677,
+            "model_id": "distil-whisper/distil-large-v3",
             "model_url": "https://huggingface.co/distil-whisper/distil-large-v3"
           },
           {
             "model_key": "parakeet-ctc-0.6b",
-            "model_id": "nvidia/parakeet-ctc-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -947,11 +975,11 @@
             "latency_ms_p90": 148.82380962371826,
             "gpu_peak_mem_mb": 90.0,
             "wall_time_s": 4.306675434112549,
+            "model_id": "nvidia/parakeet-ctc-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-0.6b"
           },
           {
             "model_key": "parakeet-rnnt-1.1b",
-            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -964,11 +992,11 @@
             "latency_ms_p90": 291.4988040924072,
             "gpu_peak_mem_mb": 146.0,
             "wall_time_s": 18.83351159095764,
+            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-1.1b"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -981,11 +1009,11 @@
             "latency_ms_p90": 3084.6889019012456,
             "gpu_peak_mem_mb": 1450.0,
             "wall_time_s": 53.24385857582092,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -998,11 +1026,11 @@
             "latency_ms_p90": 4113.297772407533,
             "gpu_peak_mem_mb": 54.0,
             "wall_time_s": 64.70589137077332,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "parakeet-rnnt-0.6b",
-            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1015,11 +1043,11 @@
             "latency_ms_p90": 202.44684219360354,
             "gpu_peak_mem_mb": 116.0,
             "wall_time_s": 6.387129306793213,
+            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-0.6b"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1032,11 +1060,11 @@
             "latency_ms_p90": 76875.24371147156,
             "gpu_peak_mem_mb": 5520.0,
             "wall_time_s": 1212.2727718353271,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1049,11 +1077,11 @@
             "latency_ms_p90": 467.39985942840576,
             "gpu_peak_mem_mb": 328.0,
             "wall_time_s": 13.141383647918701,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "parakeet-tdt_ctc-110m",
-            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1066,11 +1094,11 @@
             "latency_ms_p90": 1701.0669708251953,
             "gpu_peak_mem_mb": 674.0,
             "wall_time_s": 50.766836643218994,
+            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt_ctc-110m"
           },
           {
             "model_key": "whisper-base.en",
-            "model_id": "openai/whisper-base.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1083,11 +1111,11 @@
             "latency_ms_p90": 607.0793628692628,
             "gpu_peak_mem_mb": 174.0,
             "wall_time_s": 10.504095792770386,
+            "model_id": "openai/whisper-base.en",
             "model_url": "https://huggingface.co/openai/whisper-base.en"
           },
           {
             "model_key": "whisper-small.en",
-            "model_id": "openai/whisper-small.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1100,11 +1128,11 @@
             "latency_ms_p90": 1075.6902933120728,
             "gpu_peak_mem_mb": 388.0,
             "wall_time_s": 39.99064111709595,
+            "model_id": "openai/whisper-small.en",
             "model_url": "https://huggingface.co/openai/whisper-small.en"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1117,11 +1145,11 @@
             "latency_ms_p90": 1134.6302986145022,
             "gpu_peak_mem_mb": 360.0,
             "wall_time_s": 24.442731857299805,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1134,11 +1162,11 @@
             "latency_ms_p90": 612.8859996795654,
             "gpu_peak_mem_mb": 270.0,
             "wall_time_s": 23.526155471801758,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "parakeet-tdt-1.1b",
-            "model_id": "nvidia/parakeet-tdt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1151,13 +1179,13 @@
             "latency_ms_p90": 299.413013458252,
             "gpu_peak_mem_mb": 106.0,
             "wall_time_s": 7.208098888397217,
+            "model_id": "nvidia/parakeet-tdt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-1.1b"
           }
         ],
         "librispeech_other": [
           {
             "model_key": "parakeet-tdt_ctc-110m",
-            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1170,11 +1198,11 @@
             "latency_ms_p90": 1684.2936277389526,
             "gpu_peak_mem_mb": 70.0,
             "wall_time_s": 50.65325856208801,
+            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt_ctc-110m"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1187,11 +1215,11 @@
             "latency_ms_p90": 428.5303354263306,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 12.639716386795044,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-small.en",
-            "model_id": "openai/whisper-small.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1204,11 +1232,11 @@
             "latency_ms_p90": 930.61318397522,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 17.936143398284912,
+            "model_id": "openai/whisper-small.en",
             "model_url": "https://huggingface.co/openai/whisper-small.en"
           },
           {
             "model_key": "parakeet-ctc-0.6b",
-            "model_id": "nvidia/parakeet-ctc-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1221,11 +1249,11 @@
             "latency_ms_p90": 133.39955806732178,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.3535778522491455,
+            "model_id": "nvidia/parakeet-ctc-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-0.6b"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1238,11 +1266,11 @@
             "latency_ms_p90": 2435.5065107345586,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 51.125887393951416,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1255,11 +1283,11 @@
             "latency_ms_p90": 67202.98585891724,
             "gpu_peak_mem_mb": 5460.0,
             "wall_time_s": 1183.1908550262451,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           },
           {
             "model_key": "parakeet-ctc-1.1b",
-            "model_id": "nvidia/parakeet-ctc-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1272,11 +1300,11 @@
             "latency_ms_p90": 228.0306339263916,
             "gpu_peak_mem_mb": 2.0,
             "wall_time_s": 6.546591520309448,
+            "model_id": "nvidia/parakeet-ctc-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-1.1b"
           },
           {
             "model_key": "whisper-base.en",
-            "model_id": "openai/whisper-base.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1289,11 +1317,11 @@
             "latency_ms_p90": 500.54504871368425,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 10.608392000198364,
+            "model_id": "openai/whisper-base.en",
             "model_url": "https://huggingface.co/openai/whisper-base.en"
           },
           {
             "model_key": "whisper-tiny.en",
-            "model_id": "openai/whisper-tiny.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1306,11 +1334,11 @@
             "latency_ms_p90": 390.76883792877203,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 8.709133625030518,
+            "model_id": "openai/whisper-tiny.en",
             "model_url": "https://huggingface.co/openai/whisper-tiny.en"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1323,11 +1351,11 @@
             "latency_ms_p90": 3395.1478242874146,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 62.2200071811676,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v2",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1340,11 +1368,11 @@
             "latency_ms_p90": 148.21503162384033,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.349162817001343,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1357,11 +1385,11 @@
             "latency_ms_p90": 940.7353639602663,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 23.16768765449524,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-medium.en",
-            "model_id": "openai/whisper-medium.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1374,11 +1402,11 @@
             "latency_ms_p90": 1766.2835359573367,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 34.3314573764801,
+            "model_id": "openai/whisper-medium.en",
             "model_url": "https://huggingface.co/openai/whisper-medium.en"
           },
           {
             "model_key": "parakeet-rnnt-0.6b",
-            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1391,11 +1419,11 @@
             "latency_ms_p90": 142.0304298400879,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 3.9555413722991943,
+            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-0.6b"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1408,11 +1436,11 @@
             "latency_ms_p90": 510.7196092605592,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 23.94547176361084,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "fw-distil-large-v3",
-            "model_id": "distil-large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1425,11 +1453,11 @@
             "latency_ms_p90": 419.5845127105713,
             "gpu_peak_mem_mb": 224.0,
             "wall_time_s": 12.264626502990723,
+            "model_id": "distil-large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1442,11 +1470,11 @@
             "latency_ms_p90": 2201.7647504806523,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 50.68630242347717,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "distil-large-v3",
-            "model_id": "distil-whisper/distil-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1459,11 +1487,11 @@
             "latency_ms_p90": 379.62267398834234,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 10.324153184890747,
+            "model_id": "distil-whisper/distil-large-v3",
             "model_url": "https://huggingface.co/distil-whisper/distil-large-v3"
           },
           {
             "model_key": "parakeet-tdt-1.1b",
-            "model_id": "nvidia/parakeet-tdt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1476,11 +1504,11 @@
             "latency_ms_p90": 202.906608581543,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 30.298526525497437,
+            "model_id": "nvidia/parakeet-tdt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-1.1b"
           },
           {
             "model_key": "parakeet-rnnt-1.1b",
-            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1493,11 +1521,11 @@
             "latency_ms_p90": 257.1892023086548,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 7.157223701477051,
+            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-1.1b"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1510,13 +1538,13 @@
             "latency_ms_p90": 159.22722816467285,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.356804609298706,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           }
         ],
         "earnings22": [
           {
             "model_key": "whisper-medium.en",
-            "model_id": "openai/whisper-medium.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1529,11 +1557,11 @@
             "latency_ms_p90": 1290.0226593017578,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 37.30071759223938,
+            "model_id": "openai/whisper-medium.en",
             "model_url": "https://huggingface.co/openai/whisper-medium.en"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1546,11 +1574,11 @@
             "latency_ms_p90": 156.8765640258789,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.861488342285156,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "fw-distil-large-v3",
-            "model_id": "distil-large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1563,11 +1591,11 @@
             "latency_ms_p90": 420.8962917327881,
             "gpu_peak_mem_mb": 224.0,
             "wall_time_s": 12.732805967330933,
+            "model_id": "distil-large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v2",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1580,11 +1608,11 @@
             "latency_ms_p90": 150.54724216461182,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.651083469390869,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2"
           },
           {
             "model_key": "parakeet-rnnt-1.1b",
-            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1597,11 +1625,11 @@
             "latency_ms_p90": 244.5483207702637,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 6.896150588989258,
+            "model_id": "nvidia/parakeet-rnnt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-1.1b"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1614,11 +1642,11 @@
             "latency_ms_p90": 2032.8588724136355,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 41.52489972114563,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "parakeet-ctc-0.6b",
-            "model_id": "nvidia/parakeet-ctc-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1631,11 +1659,11 @@
             "latency_ms_p90": 142.7201271057129,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.494830131530762,
+            "model_id": "nvidia/parakeet-ctc-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-0.6b"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1648,11 +1676,11 @@
             "latency_ms_p90": 601.885175704956,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 13.396631717681885,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "parakeet-tdt_ctc-110m",
-            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1665,11 +1693,11 @@
             "latency_ms_p90": 1693.3165073394775,
             "gpu_peak_mem_mb": 48.0,
             "wall_time_s": 51.43510603904724,
+            "model_id": "nvidia/parakeet-tdt_ctc-110m",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt_ctc-110m"
           },
           {
             "model_key": "parakeet-ctc-1.1b",
-            "model_id": "nvidia/parakeet-ctc-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1682,11 +1710,11 @@
             "latency_ms_p90": 227.06522941589355,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 6.674710273742676,
+            "model_id": "nvidia/parakeet-ctc-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-ctc-1.1b"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1699,11 +1727,11 @@
             "latency_ms_p90": 901.2725114822388,
             "gpu_peak_mem_mb": 256.0,
             "wall_time_s": 21.644453525543213,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "distil-large-v3",
-            "model_id": "distil-whisper/distil-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1716,11 +1744,11 @@
             "latency_ms_p90": 435.3612899780274,
             "gpu_peak_mem_mb": 170.0,
             "wall_time_s": 10.716190338134766,
+            "model_id": "distil-whisper/distil-large-v3",
             "model_url": "https://huggingface.co/distil-whisper/distil-large-v3"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1733,11 +1761,11 @@
             "latency_ms_p90": 2616.4750099182133,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 51.844237089157104,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "whisper-small.en",
-            "model_id": "openai/whisper-small.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1750,11 +1778,11 @@
             "latency_ms_p90": 866.2237405776978,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 16.205877780914307,
+            "model_id": "openai/whisper-small.en",
             "model_url": "https://huggingface.co/openai/whisper-small.en"
           },
           {
             "model_key": "parakeet-tdt-1.1b",
-            "model_id": "nvidia/parakeet-tdt-1.1b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1767,11 +1795,11 @@
             "latency_ms_p90": 254.55739498138428,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 6.630932569503784,
+            "model_id": "nvidia/parakeet-tdt-1.1b",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-1.1b"
           },
           {
             "model_key": "whisper-tiny.en",
-            "model_id": "openai/whisper-tiny.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1784,11 +1812,11 @@
             "latency_ms_p90": 446.4101314544678,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 8.505528926849365,
+            "model_id": "openai/whisper-tiny.en",
             "model_url": "https://huggingface.co/openai/whisper-tiny.en"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1801,11 +1829,11 @@
             "latency_ms_p90": 461.4176273345947,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 13.459810972213745,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-base.en",
-            "model_id": "openai/whisper-base.en",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1818,11 +1846,11 @@
             "latency_ms_p90": 435.72099208831787,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 9.571587800979614,
+            "model_id": "openai/whisper-base.en",
             "model_url": "https://huggingface.co/openai/whisper-base.en"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1835,11 +1863,11 @@
             "latency_ms_p90": 2010.7017517089844,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 63.95953607559204,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "parakeet-rnnt-0.6b",
-            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -1852,11 +1880,11 @@
             "latency_ms_p90": 156.60569667816162,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.679674386978149,
+            "model_id": "nvidia/parakeet-rnnt-0.6b",
             "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-0.6b"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1869,7 +1897,401 @@
             "latency_ms_p90": 49076.37431621552,
             "gpu_peak_mem_mb": 5440.0,
             "wall_time_s": 903.0897288322449,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
+          }
+        ],
+        "common_voice_22_en": [
+          {
+            "model_key": "whisper-large-v3",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.12156862745098039,
+            "cer": 0.06896551724137931,
+            "rtfx_mean": 5.793019366218268,
+            "rtfx_p50": 5.455302771552823,
+            "rtfx_p10": 3.7446163800556853,
+            "latency_ms_mean": 928.224770228068,
+            "latency_ms_p90": 1391.1138057708743,
+            "gpu_peak_mem_mb": 1406.0,
+            "wall_time_s": 28.41240668296814,
+            "model_id": "openai/whisper-large-v3",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3"
+          },
+          {
+            "model_key": "parakeet-rnnt-0.6b",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.12156862745098039,
+            "cer": 0.060719640179910044,
+            "rtfx_mean": 57.63380472160872,
+            "rtfx_p50": 56.80260308096334,
+            "rtfx_p10": 35.74944913035954,
+            "latency_ms_mean": 140.56488672892252,
+            "latency_ms_p90": 105.07676601409915,
+            "gpu_peak_mem_mb": 50.0,
+            "wall_time_s": 4.827604293823242,
+            "model_id": "nvidia/parakeet-rnnt-0.6b",
+            "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-0.6b"
+          },
+          {
+            "model_key": "parakeet-ctc-1.1b",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.09411764705882353,
+            "cer": 0.05322338830584707,
+            "rtfx_mean": 40.37429604743706,
+            "rtfx_p50": 40.52118175877294,
+            "rtfx_p10": 25.653515584135622,
+            "latency_ms_mean": 127.18343734741211,
+            "latency_ms_p90": 145.672869682312,
+            "gpu_peak_mem_mb": 30.0,
+            "wall_time_s": 4.498104572296143,
+            "model_id": "nvidia/parakeet-ctc-1.1b",
+            "model_url": "https://huggingface.co/nvidia/parakeet-ctc-1.1b"
+          },
+          {
+            "model_key": "whisper-large-v3-turbo",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.12156862745098039,
+            "cer": 0.05922038980509745,
+            "rtfx_mean": 16.925660439193706,
+            "rtfx_p50": 15.506554134252578,
+            "rtfx_p10": 10.874360985799544,
+            "latency_ms_mean": 305.4902235666911,
+            "latency_ms_p90": 366.11170768737793,
+            "gpu_peak_mem_mb": 264.0,
+            "wall_time_s": 9.731515884399414,
+            "model_id": "openai/whisper-large-v3-turbo",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
+          },
+          {
+            "model_key": "whisper-large-v2",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.12941176470588237,
+            "cer": 0.07196401799100449,
+            "rtfx_mean": 5.326479249739625,
+            "rtfx_p50": 5.330551318161325,
+            "rtfx_p10": 3.581474232175419,
+            "latency_ms_mean": 1001.683791478475,
+            "latency_ms_p90": 1436.7464542388918,
+            "gpu_peak_mem_mb": 1480.0,
+            "wall_time_s": 118.87022280693054,
+            "model_id": "openai/whisper-large-v2",
+            "model_url": "https://huggingface.co/openai/whisper-large-v2"
+          },
+          {
+            "model_key": "parakeet-tdt-0.6b-v2",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.09019607843137255,
+            "cer": 0.05772113943028486,
+            "rtfx_mean": 60.70325040322019,
+            "rtfx_p50": 60.148466994191736,
+            "rtfx_p10": 40.017739782335944,
+            "latency_ms_mean": 130.0816853841146,
+            "latency_ms_p90": 100.14147758483888,
+            "gpu_peak_mem_mb": 112.0,
+            "wall_time_s": 4.4793455600738525,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v2",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2"
+          },
+          {
+            "model_key": "parakeet-tdt-1.1b",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.06666666666666667,
+            "cer": 0.034482758620689655,
+            "rtfx_mean": 34.398089610976044,
+            "rtfx_p50": 35.372301278704654,
+            "rtfx_p10": 23.14567555886445,
+            "latency_ms_mean": 148.46555391947427,
+            "latency_ms_p90": 180.18529415130615,
+            "gpu_peak_mem_mb": 54.0,
+            "wall_time_s": 5.502430200576782,
+            "model_id": "nvidia/parakeet-tdt-1.1b",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt-1.1b"
+          },
+          {
+            "model_key": "whisper-medium.en",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.1568627450980392,
+            "cer": 0.09070464767616192,
+            "rtfx_mean": 8.921515855882841,
+            "rtfx_p50": 8.376714640143494,
+            "rtfx_p10": 5.730379677526659,
+            "latency_ms_mean": 604.202405611674,
+            "latency_ms_p90": 870.1478481292726,
+            "gpu_peak_mem_mb": 852.0,
+            "wall_time_s": 18.699066638946533,
+            "model_id": "openai/whisper-medium.en",
+            "model_url": "https://huggingface.co/openai/whisper-medium.en"
+          },
+          {
+            "model_key": "parakeet-tdt_ctc-110m",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.12941176470588237,
+            "cer": 0.06671664167916042,
+            "rtfx_mean": 3.226856651384227,
+            "rtfx_p50": 3.2356942207010957,
+            "rtfx_p10": 1.790546353460412,
+            "latency_ms_mean": 1628.7043571472168,
+            "latency_ms_p90": 1657.6130867004395,
+            "gpu_peak_mem_mb": 674.0,
+            "wall_time_s": 49.46979880332947,
+            "model_id": "nvidia/parakeet-tdt_ctc-110m",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt_ctc-110m"
+          },
+          {
+            "model_key": "whisper-tiny",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.23921568627450981,
+            "cer": 0.13493253373313344,
+            "rtfx_mean": 44.55349247273804,
+            "rtfx_p50": 41.45928627770176,
+            "rtfx_p10": 31.395086495243973,
+            "latency_ms_mean": 121.06447219848633,
+            "latency_ms_p90": 181.92965984344482,
+            "gpu_peak_mem_mb": 88.0,
+            "wall_time_s": 4.221927881240845,
+            "model_id": "openai/whisper-tiny",
+            "model_url": "https://huggingface.co/openai/whisper-tiny"
+          },
+          {
+            "model_key": "whisper-medium",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.11764705882352941,
+            "cer": 0.06296851574212893,
+            "rtfx_mean": 9.512056578320756,
+            "rtfx_p50": 8.889498518955044,
+            "rtfx_p10": 6.033610834790868,
+            "latency_ms_mean": 566.3350184758505,
+            "latency_ms_p90": 780.9237957000734,
+            "gpu_peak_mem_mb": 854.0,
+            "wall_time_s": 17.54802179336548,
+            "model_id": "openai/whisper-medium",
+            "model_url": "https://huggingface.co/openai/whisper-medium"
+          },
+          {
+            "model_key": "whisper-small",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.13333333333333333,
+            "cer": 0.06896551724137931,
+            "rtfx_mean": 21.235940028092507,
+            "rtfx_p50": 19.830702018558796,
+            "rtfx_p10": 13.794775001924137,
+            "latency_ms_mean": 256.9150924682617,
+            "latency_ms_p90": 405.06930351257324,
+            "gpu_peak_mem_mb": 334.0,
+            "wall_time_s": 8.270271301269531,
+            "model_id": "openai/whisper-small",
+            "model_url": "https://huggingface.co/openai/whisper-small"
+          },
+          {
+            "model_key": "fw-large-v3",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.13333333333333333,
+            "cer": 0.07496251874062969,
+            "rtfx_mean": 8.639108504081793,
+            "rtfx_p50": 8.09869390759247,
+            "rtfx_p10": 5.702913434540567,
+            "latency_ms_mean": 595.4082330067953,
+            "latency_ms_p90": 716.6330337524414,
+            "gpu_peak_mem_mb": 298.0,
+            "wall_time_s": 18.436399698257446,
+            "model_id": "large-v3",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "distil-large-v3",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.1450980392156863,
+            "cer": 0.07496251874062969,
+            "rtfx_mean": 19.516892018553804,
+            "rtfx_p50": 18.82497036821499,
+            "rtfx_p10": 12.53909300384227,
+            "latency_ms_mean": 263.6505365371704,
+            "latency_ms_p90": 308.6416721343994,
+            "gpu_peak_mem_mb": 186.0,
+            "wall_time_s": 8.454505681991577,
+            "model_id": "distil-whisper/distil-large-v3",
+            "model_url": "https://huggingface.co/distil-whisper/distil-large-v3"
+          },
+          {
+            "model_key": "whisper-base.en",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.1568627450980392,
+            "cer": 0.0937031484257871,
+            "rtfx_mean": 36.45641799068099,
+            "rtfx_p50": 33.89836362192985,
+            "rtfx_p10": 24.8002739825204,
+            "latency_ms_mean": 148.27855428059897,
+            "latency_ms_p90": 227.34749317169192,
+            "gpu_peak_mem_mb": 170.0,
+            "wall_time_s": 5.033745288848877,
+            "model_id": "openai/whisper-base.en",
+            "model_url": "https://huggingface.co/openai/whisper-base.en"
+          },
+          {
+            "model_key": "parakeet-rnnt-1.1b",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.06274509803921569,
+            "cer": 0.04122938530734633,
+            "rtfx_mean": 29.27572576213174,
+            "rtfx_p50": 30.062287869300622,
+            "rtfx_p10": 18.417738099877255,
+            "latency_ms_mean": 233.73525937398276,
+            "latency_ms_p90": 195.92957496643066,
+            "gpu_peak_mem_mb": 78.0,
+            "wall_time_s": 7.63392186164856,
+            "model_id": "nvidia/parakeet-rnnt-1.1b",
+            "model_url": "https://huggingface.co/nvidia/parakeet-rnnt-1.1b"
+          },
+          {
+            "model_key": "parakeet-tdt-0.6b-v3",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.10196078431372549,
+            "cer": 0.060719640179910044,
+            "rtfx_mean": 59.93898691190118,
+            "rtfx_p50": 59.202668132768764,
+            "rtfx_p10": 40.10771974937181,
+            "latency_ms_mean": 142.29501883188883,
+            "latency_ms_p90": 98.73771667480472,
+            "gpu_peak_mem_mb": 132.0,
+            "wall_time_s": 4.839241981506348,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
+          },
+          {
+            "model_key": "fw-distil-large-v3",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.1607843137254902,
+            "cer": 0.07871064467766117,
+            "rtfx_mean": 14.483242662566619,
+            "rtfx_p50": 14.824448236370525,
+            "rtfx_p10": 8.333515366507779,
+            "latency_ms_mean": 358.3758036295573,
+            "latency_ms_p90": 378.1609773635864,
+            "gpu_peak_mem_mb": 296.0,
+            "wall_time_s": 11.35422945022583,
+            "model_id": "distil-large-v3",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-base",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.1843137254901961,
+            "cer": 0.095952023988006,
+            "rtfx_mean": 38.277990829959535,
+            "rtfx_p50": 34.6552425148564,
+            "rtfx_p10": 26.15732694918504,
+            "latency_ms_mean": 143.50744088490805,
+            "latency_ms_p90": 219.82326507568362,
+            "gpu_peak_mem_mb": 170.0,
+            "wall_time_s": 4.867328405380249,
+            "model_id": "openai/whisper-base",
+            "model_url": "https://huggingface.co/openai/whisper-base"
+          },
+          {
+            "model_key": "parakeet-ctc-0.6b",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.13333333333333333,
+            "cer": 0.07496251874062969,
+            "rtfx_mean": 71.43913606447087,
+            "rtfx_p50": 66.73569803497725,
+            "rtfx_p10": 44.135929779345766,
+            "latency_ms_mean": 72.80817031860352,
+            "latency_ms_p90": 79.43594455718994,
+            "gpu_peak_mem_mb": 28.0,
+            "wall_time_s": 2.8084332942962646,
+            "model_id": "nvidia/parakeet-ctc-0.6b",
+            "model_url": "https://huggingface.co/nvidia/parakeet-ctc-0.6b"
+          },
+          {
+            "model_key": "whisper-tiny.en",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.2627450980392157,
+            "cer": 0.1431784107946027,
+            "rtfx_mean": 48.231562822858216,
+            "rtfx_p50": 44.47352847855091,
+            "rtfx_p10": 32.15293253912736,
+            "latency_ms_mean": 113.39786052703857,
+            "latency_ms_p90": 166.49432182312015,
+            "gpu_peak_mem_mb": 88.0,
+            "wall_time_s": 3.953632354736328,
+            "model_id": "openai/whisper-tiny.en",
+            "model_url": "https://huggingface.co/openai/whisper-tiny.en"
+          },
+          {
+            "model_key": "fw-large-v3-turbo",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.12156862745098039,
+            "cer": 0.05922038980509745,
+            "rtfx_mean": 13.873800534899836,
+            "rtfx_p50": 14.14307976729067,
+            "rtfx_p10": 8.033771962248645,
+            "latency_ms_mean": 374.13275241851807,
+            "latency_ms_p90": 396.73964977264404,
+            "gpu_peak_mem_mb": 328.0,
+            "wall_time_s": 11.81138277053833,
+            "model_id": "large-v3-turbo",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-small.en",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.15294117647058825,
+            "cer": 0.07646176911544228,
+            "rtfx_mean": 21.13280704236665,
+            "rtfx_p50": 19.43427424800656,
+            "rtfx_p10": 14.126785254918902,
+            "latency_ms_mean": 257.20898310343426,
+            "latency_ms_p90": 377.08034515380865,
+            "gpu_peak_mem_mb": 334.0,
+            "wall_time_s": 8.254074573516846,
+            "model_id": "openai/whisper-small.en",
+            "model_url": "https://huggingface.co/openai/whisper-small.en"
           }
         ]
       },
@@ -1878,18 +2300,17 @@
         "librispeech_other",
         "ami_ihm",
         "earnings22",
-        "voxpopuli_en"
+        "voxpopuli_en",
+        "common_voice_22_en"
       ]
     },
     "es": {
       "label": "Espa\u00f1ol",
-      "run_id": "es",
       "sample_cap": 30,
       "results": {
         "mls_es": [
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -1902,11 +2323,11 @@
             "latency_ms_p90": 571.2835073471069,
             "gpu_peak_mem_mb": 328.0,
             "wall_time_s": 17.792229890823364,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-base",
-            "model_id": "openai/whisper-base",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1919,11 +2340,11 @@
             "latency_ms_p90": 661.0085487365723,
             "gpu_peak_mem_mb": 174.0,
             "wall_time_s": 17.78833770751953,
+            "model_id": "openai/whisper-base",
             "model_url": "https://huggingface.co/openai/whisper-base"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1936,11 +2357,11 @@
             "latency_ms_p90": 4199.797010421753,
             "gpu_peak_mem_mb": 30.0,
             "wall_time_s": 101.89433193206787,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "whisper-tiny",
-            "model_id": "openai/whisper-tiny",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1953,11 +2374,11 @@
             "latency_ms_p90": 518.907403945923,
             "gpu_peak_mem_mb": 92.0,
             "wall_time_s": 14.54102635383606,
+            "model_id": "openai/whisper-tiny",
             "model_url": "https://huggingface.co/openai/whisper-tiny"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -1970,11 +2391,11 @@
             "latency_ms_p90": 789.4945383071899,
             "gpu_peak_mem_mb": 270.0,
             "wall_time_s": 21.447555780410767,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -1987,11 +2408,11 @@
             "latency_ms_p90": 95251.4030456543,
             "gpu_peak_mem_mb": 5532.0,
             "wall_time_s": 2192.244235277176,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2004,11 +2425,11 @@
             "latency_ms_p90": 3699.6809244155884,
             "gpu_peak_mem_mb": 1450.0,
             "wall_time_s": 101.82430362701416,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "whisper-small",
-            "model_id": "openai/whisper-small",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2021,11 +2442,11 @@
             "latency_ms_p90": 1234.163236618042,
             "gpu_peak_mem_mb": 356.0,
             "wall_time_s": 30.787102222442627,
+            "model_id": "openai/whisper-small",
             "model_url": "https://huggingface.co/openai/whisper-small"
           },
           {
             "model_key": "whisper-medium",
-            "model_id": "openai/whisper-medium",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2038,11 +2459,11 @@
             "latency_ms_p90": 2504.9370765686035,
             "gpu_peak_mem_mb": 896.0,
             "wall_time_s": 61.005741119384766,
+            "model_id": "openai/whisper-medium",
             "model_url": "https://huggingface.co/openai/whisper-medium"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2055,11 +2476,11 @@
             "latency_ms_p90": 3529.412007331848,
             "gpu_peak_mem_mb": 1448.0,
             "wall_time_s": 87.58353614807129,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2072,11 +2493,11 @@
             "latency_ms_p90": 1784.6290588378906,
             "gpu_peak_mem_mb": 330.0,
             "wall_time_s": 40.97697997093201,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -2089,13 +2510,13 @@
             "latency_ms_p90": 223.29781055450442,
             "gpu_peak_mem_mb": 194.0,
             "wall_time_s": 11.408479452133179,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           }
         ],
         "voxpopuli_es": [
           {
             "model_key": "whisper-small",
-            "model_id": "openai/whisper-small",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2108,11 +2529,11 @@
             "latency_ms_p90": 1541.4164781570437,
             "gpu_peak_mem_mb": 12.0,
             "wall_time_s": 39.81788682937622,
+            "model_id": "openai/whisper-small",
             "model_url": "https://huggingface.co/openai/whisper-small"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2125,11 +2546,11 @@
             "latency_ms_p90": 1921.2114334106448,
             "gpu_peak_mem_mb": 352.0,
             "wall_time_s": 49.597732067108154,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2142,11 +2563,11 @@
             "latency_ms_p90": 689.7493839263916,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 28.64549732208252,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-base",
-            "model_id": "openai/whisper-base",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2159,11 +2580,11 @@
             "latency_ms_p90": 812.390685081482,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 26.727623462677002,
+            "model_id": "openai/whisper-base",
             "model_url": "https://huggingface.co/openai/whisper-base"
           },
           {
             "model_key": "gemma-4-E2B-it",
-            "model_id": "google/gemma-4-E2B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -2176,11 +2597,11 @@
             "latency_ms_p90": 4898.69692325592,
             "gpu_peak_mem_mb": 40.0,
             "wall_time_s": 97.32215332984924,
+            "model_id": "google/gemma-4-E2B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           },
           {
             "model_key": "whisper-tiny",
-            "model_id": "openai/whisper-tiny",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2193,11 +2614,11 @@
             "latency_ms_p90": 598.7588405609132,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 109.50194430351257,
+            "model_id": "openai/whisper-tiny",
             "model_url": "https://huggingface.co/openai/whisper-tiny"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -2210,11 +2631,11 @@
             "latency_ms_p90": 266.4685249328613,
             "gpu_peak_mem_mb": 224.0,
             "wall_time_s": 172.3052852153778,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2227,11 +2648,11 @@
             "latency_ms_p90": 956.4892768859864,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 33.76993131637573,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2244,11 +2665,11 @@
             "latency_ms_p90": 4647.516298294068,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 119.14074158668518,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "whisper-medium",
-            "model_id": "openai/whisper-medium",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2261,11 +2682,11 @@
             "latency_ms_p90": 3175.775146484376,
             "gpu_peak_mem_mb": 4.0,
             "wall_time_s": 69.79978346824646,
+            "model_id": "openai/whisper-medium",
             "model_url": "https://huggingface.co/openai/whisper-medium"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2278,11 +2699,11 @@
             "latency_ms_p90": 4588.234972953797,
             "gpu_peak_mem_mb": 2.0,
             "wall_time_s": 176.65424180030823,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "gemma-4-E4B-it",
-            "model_id": "google/gemma-4-E4B-it",
             "backend": "transformers",
             "family": "gemma",
             "n": 30,
@@ -2295,25 +2716,369 @@
             "latency_ms_p90": 111409.29069519044,
             "gpu_peak_mem_mb": 5472.0,
             "wall_time_s": 1959.4890718460083,
+            "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
+          }
+        ],
+        "common_voice_22_es": [
+          {
+            "model_key": "fw-large-v3-turbo",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.10847457627118644,
+            "cer": 0.06134969325153374,
+            "rtfx_mean": 14.216225191651766,
+            "rtfx_p50": 14.318235688343684,
+            "rtfx_p10": 8.224436607236354,
+            "latency_ms_mean": 411.4951769510905,
+            "latency_ms_p90": 441.7266368865967,
+            "gpu_peak_mem_mb": 288.0,
+            "wall_time_s": 13.143121242523193,
+            "model_id": "large-v3-turbo",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-base",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 1.0813559322033899,
+            "cer": 0.5325153374233129,
+            "rtfx_mean": 30.766276525887385,
+            "rtfx_p50": 30.90343413704167,
+            "rtfx_p10": 23.273829027039415,
+            "latency_ms_mean": 320.51859696706134,
+            "latency_ms_p90": 270.39430141448975,
+            "gpu_peak_mem_mb": 8.0,
+            "wall_time_s": 10.423959255218506,
+            "model_id": "openai/whisper-base",
+            "model_url": "https://huggingface.co/openai/whisper-base"
+          },
+          {
+            "model_key": "fw-large-v3",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.0847457627118644,
+            "cer": 0.051533742331288344,
+            "rtfx_mean": 8.473004353983258,
+            "rtfx_p50": 8.251808999506913,
+            "rtfx_p10": 5.422295303043989,
+            "latency_ms_mean": 687.6677751541138,
+            "latency_ms_p90": 808.0976963043213,
+            "gpu_peak_mem_mb": 256.0,
+            "wall_time_s": 21.42896008491516,
+            "model_id": "large-v3",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-large-v3",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.09491525423728814,
+            "cer": 0.05521472392638037,
+            "rtfx_mean": 4.776774086884753,
+            "rtfx_p50": 4.284921302163882,
+            "rtfx_p10": 3.5270271544465803,
+            "latency_ms_mean": 2050.2076069513955,
+            "latency_ms_p90": 1685.3681564331055,
+            "gpu_peak_mem_mb": 400.0,
+            "wall_time_s": 62.34951329231262,
+            "model_id": "openai/whisper-large-v3",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3"
+          },
+          {
+            "model_key": "whisper-tiny",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.9254237288135593,
+            "cer": 0.48466257668711654,
+            "rtfx_mean": 38.28993408458228,
+            "rtfx_p50": 37.586440339349686,
+            "rtfx_p10": 26.551265811481734,
+            "latency_ms_mean": 249.12066459655762,
+            "latency_ms_p90": 215.30656814575195,
+            "gpu_peak_mem_mb": 6.0,
+            "wall_time_s": 8.265849113464355,
+            "model_id": "openai/whisper-tiny",
+            "model_url": "https://huggingface.co/openai/whisper-tiny"
+          },
+          {
+            "model_key": "whisper-large-v2",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.8508474576271187,
+            "cer": 0.8644171779141104,
+            "rtfx_mean": 4.442197111197052,
+            "rtfx_p50": 4.363290188471109,
+            "rtfx_p10": 3.4223929070737675,
+            "latency_ms_mean": 2128.5624345143638,
+            "latency_ms_p90": 1688.0929946899414,
+            "gpu_peak_mem_mb": 382.0,
+            "wall_time_s": 134.32857990264893,
+            "model_id": "openai/whisper-large-v2",
+            "model_url": "https://huggingface.co/openai/whisper-large-v2"
+          },
+          {
+            "model_key": "whisper-medium",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.15254237288135594,
+            "cer": 0.06809815950920245,
+            "rtfx_mean": 7.386967943224682,
+            "rtfx_p50": 7.084029992391438,
+            "rtfx_p10": 5.632174373518481,
+            "latency_ms_mean": 804.0137926737467,
+            "latency_ms_p90": 1091.651701927185,
+            "gpu_peak_mem_mb": 0.0,
+            "wall_time_s": 24.93789768218994,
+            "model_id": "openai/whisper-medium",
+            "model_url": "https://huggingface.co/openai/whisper-medium"
+          },
+          {
+            "model_key": "whisper-large-v3-turbo",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.10508474576271186,
+            "cer": 0.05828220858895705,
+            "rtfx_mean": 15.182100403069898,
+            "rtfx_p50": 14.60163643369899,
+            "rtfx_p10": 9.767782536589749,
+            "latency_ms_mean": 381.6491365432739,
+            "latency_ms_p90": 441.6306972503662,
+            "gpu_peak_mem_mb": 0.0,
+            "wall_time_s": 12.267253160476685,
+            "model_id": "openai/whisper-large-v3-turbo",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
+          },
+          {
+            "model_key": "whisper-small",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.9661016949152542,
+            "cer": 0.8705521472392638,
+            "rtfx_mean": 15.67436062414735,
+            "rtfx_p50": 15.429678782750965,
+            "rtfx_p10": 11.432684856183437,
+            "latency_ms_mean": 633.9287122090658,
+            "latency_ms_p90": 501.94225311279297,
+            "gpu_peak_mem_mb": 108.0,
+            "wall_time_s": 19.83917999267578,
+            "model_id": "openai/whisper-small",
+            "model_url": "https://huggingface.co/openai/whisper-small"
+          },
+          {
+            "model_key": "parakeet-tdt-0.6b-v3",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.08135593220338982,
+            "cer": 0.05276073619631902,
+            "rtfx_mean": 48.49830695895354,
+            "rtfx_p50": 47.602398439401114,
+            "rtfx_p10": 29.870889026609373,
+            "latency_ms_mean": 119.7304089864095,
+            "latency_ms_p90": 133.41355323791504,
+            "gpu_peak_mem_mb": 2.0,
+            "wall_time_s": 4.416075944900513,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
+          }
+        ],
+        "fleurs_es": [
+          {
+            "model_key": "parakeet-tdt-0.6b-v3",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.030978934324659233,
+            "cer": 0.014489366674456649,
+            "rtfx_mean": 67.61755592115249,
+            "rtfx_p50": 70.11929748144792,
+            "rtfx_p10": 60.21502547858871,
+            "latency_ms_mean": 241.57617092132568,
+            "latency_ms_p90": 212.2892141342163,
+            "gpu_peak_mem_mb": 138.0,
+            "wall_time_s": 8.486294507980347,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
+          },
+          {
+            "model_key": "whisper-tiny",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.16604708798017348,
+            "cer": 0.055386772610423,
+            "rtfx_mean": 39.315090707119445,
+            "rtfx_p50": 38.96063719727166,
+            "rtfx_p10": 33.79881128932692,
+            "latency_ms_mean": 298.7217664718628,
+            "latency_ms_p90": 390.2599334716797,
+            "gpu_peak_mem_mb": 92.0,
+            "wall_time_s": 9.97281002998352,
+            "model_id": "openai/whisper-tiny",
+            "model_url": "https://huggingface.co/openai/whisper-tiny"
+          },
+          {
+            "model_key": "whisper-large-v2",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.024783147459727387,
+            "cer": 0.00817948118719327,
+            "rtfx_mean": 4.794198369806973,
+            "rtfx_p50": 4.6862414447425635,
+            "rtfx_p10": 4.198843092231224,
+            "latency_ms_mean": 2454.8494577407837,
+            "latency_ms_p90": 3156.105828285218,
+            "gpu_peak_mem_mb": 1520.0,
+            "wall_time_s": 94.72037601470947,
+            "model_id": "openai/whisper-large-v2",
+            "model_url": "https://huggingface.co/openai/whisper-large-v2"
+          },
+          {
+            "model_key": "whisper-large-v3",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.023543990086741014,
+            "cer": 0.00817948118719327,
+            "rtfx_mean": 4.762382063108943,
+            "rtfx_p50": 4.68948599190991,
+            "rtfx_p10": 4.1615349242750055,
+            "latency_ms_mean": 2443.0200576782227,
+            "latency_ms_p90": 3090.8500194549565,
+            "gpu_peak_mem_mb": 1448.0,
+            "wall_time_s": 74.35880279541016,
+            "model_id": "openai/whisper-large-v3",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3"
+          },
+          {
+            "model_key": "fw-large-v3-turbo",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.026022304832713755,
+            "cer": 0.009815377424631924,
+            "rtfx_mean": 23.76163313055436,
+            "rtfx_p50": 23.845433722885076,
+            "rtfx_p10": 18.50307621067742,
+            "latency_ms_mean": 482.74701436360675,
+            "latency_ms_p90": 554.1199922561646,
+            "gpu_peak_mem_mb": 328.0,
+            "wall_time_s": 15.499756336212158,
+            "model_id": "large-v3-turbo",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-small",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.05204460966542751,
+            "cer": 0.015424164524421594,
+            "rtfx_mean": 14.949682146845317,
+            "rtfx_p50": 14.576237058225242,
+            "rtfx_p10": 13.005935790504155,
+            "latency_ms_mean": 784.4266414642334,
+            "latency_ms_p90": 1041.5648937225342,
+            "gpu_peak_mem_mb": 344.0,
+            "wall_time_s": 24.532893896102905,
+            "model_id": "openai/whisper-small",
+            "model_url": "https://huggingface.co/openai/whisper-small"
+          },
+          {
+            "model_key": "whisper-medium",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.03593556381660471,
+            "cer": 0.011451273662070577,
+            "rtfx_mean": 7.206113798022173,
+            "rtfx_p50": 6.988318811581677,
+            "rtfx_p10": 6.431053206597391,
+            "latency_ms_mean": 1622.6779460906982,
+            "latency_ms_p90": 2091.257095336914,
+            "gpu_peak_mem_mb": 886.0,
+            "wall_time_s": 50.70743989944458,
+            "model_id": "openai/whisper-medium",
+            "model_url": "https://huggingface.co/openai/whisper-medium"
+          },
+          {
+            "model_key": "whisper-base",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.09045848822800495,
+            "cer": 0.031082028511334424,
+            "rtfx_mean": 30.415810025308666,
+            "rtfx_p50": 29.714417151904478,
+            "rtfx_p10": 25.752954074532855,
+            "latency_ms_mean": 387.3234510421753,
+            "latency_ms_p90": 505.290150642395,
+            "gpu_peak_mem_mb": 174.0,
+            "wall_time_s": 12.644328117370605,
+            "model_id": "openai/whisper-base",
+            "model_url": "https://huggingface.co/openai/whisper-base"
+          },
+          {
+            "model_key": "fw-large-v3",
+            "backend": "faster-whisper",
+            "family": "faster-whisper",
+            "n": 30,
+            "wer": 0.024783147459727387,
+            "cer": 0.008413180649684505,
+            "rtfx_mean": 10.75499959554759,
+            "rtfx_p50": 10.611873504834803,
+            "rtfx_p10": 8.859278112726866,
+            "latency_ms_mean": 1073.183544476827,
+            "latency_ms_p90": 1300.9432792663574,
+            "gpu_peak_mem_mb": 360.0,
+            "wall_time_s": 33.334957122802734,
+            "model_id": "large-v3",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-large-v3-turbo",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.02973977695167286,
+            "cer": 0.012619770974526759,
+            "rtfx_mean": 20.444402602053156,
+            "rtfx_p50": 20.144275241290806,
+            "rtfx_p10": 16.639825755054634,
+            "latency_ms_mean": 563.9076948165894,
+            "latency_ms_p90": 678.4306764602661,
+            "gpu_peak_mem_mb": 270.0,
+            "wall_time_s": 17.978435516357422,
+            "model_id": "openai/whisper-large-v3-turbo",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           }
         ]
       },
       "dataset_order": [
         "mls_es",
+        "fleurs_es",
         "voxpopuli_es",
-        "fleurs_es"
+        "common_voice_22_es"
       ]
     },
     "lt": {
       "label": "Lietuvi\u0173",
-      "run_id": "lt",
       "sample_cap": 30,
       "results": {
         "fleurs_lt": [
           {
             "model_key": "whisper-tiny",
-            "model_id": "openai/whisper-tiny",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2326,11 +3091,11 @@
             "latency_ms_p90": 899.8686552047731,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 19.308807849884033,
+            "model_id": "openai/whisper-tiny",
             "model_url": "https://huggingface.co/openai/whisper-tiny"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2343,11 +3108,11 @@
             "latency_ms_p90": 5482.598519325257,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 121.90385103225708,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2360,11 +3125,11 @@
             "latency_ms_p90": 1926.0004997253418,
             "gpu_peak_mem_mb": 416.0,
             "wall_time_s": 45.05993676185608,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-small",
-            "model_id": "openai/whisper-small",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2377,11 +3142,11 @@
             "latency_ms_p90": 1985.7298612594607,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 42.5765266418457,
+            "model_id": "openai/whisper-small",
             "model_url": "https://huggingface.co/openai/whisper-small"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2394,11 +3159,11 @@
             "latency_ms_p90": 5408.11083316803,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 115.92899203300476,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2411,11 +3176,11 @@
             "latency_ms_p90": 1124.25696849823,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 27.146475315093994,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -2428,11 +3193,11 @@
             "latency_ms_p90": 212.28995323181155,
             "gpu_peak_mem_mb": 2.0,
             "wall_time_s": 7.385879278182983,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2445,11 +3210,11 @@
             "latency_ms_p90": 650.9557247161865,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 18.32028317451477,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-base",
-            "model_id": "openai/whisper-base",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2462,11 +3227,11 @@
             "latency_ms_p90": 1062.2787952423098,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 24.331143379211426,
+            "model_id": "openai/whisper-base",
             "model_url": "https://huggingface.co/openai/whisper-base"
           },
           {
             "model_key": "whisper-medium",
-            "model_id": "openai/whisper-medium",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2479,13 +3244,13 @@
             "latency_ms_p90": 3628.8377761840825,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 80.22478008270264,
+            "model_id": "openai/whisper-medium",
             "model_url": "https://huggingface.co/openai/whisper-medium"
           }
         ],
         "common_voice_22_lt": [
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2498,11 +3263,11 @@
             "latency_ms_p90": 967.9181337356567,
             "gpu_peak_mem_mb": 256.0,
             "wall_time_s": 23.405243158340454,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-small",
-            "model_id": "openai/whisper-small",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2515,11 +3280,11 @@
             "latency_ms_p90": 765.4644727706909,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 16.10720729827881,
+            "model_id": "openai/whisper-small",
             "model_url": "https://huggingface.co/openai/whisper-small"
           },
           {
             "model_key": "whisper-medium",
-            "model_id": "openai/whisper-medium",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2532,11 +3297,11 @@
             "latency_ms_p90": 1441.6992187500002,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 31.738903760910034,
+            "model_id": "openai/whisper-medium",
             "model_url": "https://huggingface.co/openai/whisper-medium"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2549,11 +3314,11 @@
             "latency_ms_p90": 2296.256470680237,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 67.01081109046936,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "whisper-base",
-            "model_id": "openai/whisper-base",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2566,11 +3331,11 @@
             "latency_ms_p90": 444.5307016372681,
             "gpu_peak_mem_mb": 2.0,
             "wall_time_s": 13.76401662826538,
+            "model_id": "openai/whisper-base",
             "model_url": "https://huggingface.co/openai/whisper-base"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2583,11 +3348,11 @@
             "latency_ms_p90": 471.2444067001343,
             "gpu_peak_mem_mb": 288.0,
             "wall_time_s": 13.661797285079956,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2600,11 +3365,11 @@
             "latency_ms_p90": 2192.839479446411,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 47.42602896690369,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -2617,11 +3382,11 @@
             "latency_ms_p90": 139.66159820556643,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 4.220335245132446,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "whisper-tiny",
-            "model_id": "openai/whisper-tiny",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2634,11 +3399,11 @@
             "latency_ms_p90": 737.4905109405564,
             "gpu_peak_mem_mb": 0.0,
             "wall_time_s": 18.266037464141846,
+            "model_id": "openai/whisper-tiny",
             "model_url": "https://huggingface.co/openai/whisper-tiny"
           },
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2651,13 +3416,13 @@
             "latency_ms_p90": 585.8657836914062,
             "gpu_peak_mem_mb": 40.0,
             "wall_time_s": 18.04890513420105,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           }
         ],
         "voxpopuli_lt": [
           {
             "model_key": "whisper-large-v3-turbo",
-            "model_id": "openai/whisper-large-v3-turbo",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2670,11 +3435,11 @@
             "latency_ms_p90": 1364.2432212829592,
             "gpu_peak_mem_mb": 270.0,
             "wall_time_s": 26.645047903060913,
+            "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
           },
           {
             "model_key": "whisper-large-v3",
-            "model_id": "openai/whisper-large-v3",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2687,11 +3452,11 @@
             "latency_ms_p90": 7858.708095550537,
             "gpu_peak_mem_mb": 1848.0,
             "wall_time_s": 166.68711876869202,
+            "model_id": "openai/whisper-large-v3",
             "model_url": "https://huggingface.co/openai/whisper-large-v3"
           },
           {
             "model_key": "whisper-base",
-            "model_id": "openai/whisper-base",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2704,11 +3469,11 @@
             "latency_ms_p90": 1173.4185934066777,
             "gpu_peak_mem_mb": 180.0,
             "wall_time_s": 24.83554458618164,
+            "model_id": "openai/whisper-base",
             "model_url": "https://huggingface.co/openai/whisper-base"
           },
           {
             "model_key": "whisper-small",
-            "model_id": "openai/whisper-small",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2721,11 +3486,11 @@
             "latency_ms_p90": 2223.8007783889775,
             "gpu_peak_mem_mb": 356.0,
             "wall_time_s": 41.86356472969055,
+            "model_id": "openai/whisper-small",
             "model_url": "https://huggingface.co/openai/whisper-small"
           },
           {
             "model_key": "whisper-large-v2",
-            "model_id": "openai/whisper-large-v2",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2738,11 +3503,11 @@
             "latency_ms_p90": 6488.153958320619,
             "gpu_peak_mem_mb": 1522.0,
             "wall_time_s": 141.19247484207153,
+            "model_id": "openai/whisper-large-v2",
             "model_url": "https://huggingface.co/openai/whisper-large-v2"
           },
           {
             "model_key": "parakeet-tdt-0.6b-v3",
-            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "backend": "nemo",
             "family": "parakeet",
             "n": 30,
@@ -2755,11 +3520,11 @@
             "latency_ms_p90": 268.1359052658081,
             "gpu_peak_mem_mb": 258.0,
             "wall_time_s": 8.716835975646973,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
           },
           {
             "model_key": "fw-large-v3-turbo",
-            "model_id": "large-v3-turbo",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2772,11 +3537,11 @@
             "latency_ms_p90": 741.5565967559814,
             "gpu_peak_mem_mb": 328.0,
             "wall_time_s": 18.723129987716675,
+            "model_id": "large-v3-turbo",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-medium",
-            "model_id": "openai/whisper-medium",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2789,11 +3554,11 @@
             "latency_ms_p90": 4595.546245574952,
             "gpu_peak_mem_mb": 948.0,
             "wall_time_s": 83.5585081577301,
+            "model_id": "openai/whisper-medium",
             "model_url": "https://huggingface.co/openai/whisper-medium"
           },
           {
             "model_key": "fw-large-v3",
-            "model_id": "large-v3",
             "backend": "faster-whisper",
             "family": "faster-whisper",
             "n": 30,
@@ -2806,11 +3571,11 @@
             "latency_ms_p90": 2426.4324426651,
             "gpu_peak_mem_mb": 456.0,
             "wall_time_s": 46.06506299972534,
+            "model_id": "large-v3",
             "model_url": "https://github.com/SYSTRAN/faster-whisper"
           },
           {
             "model_key": "whisper-tiny",
-            "model_id": "openai/whisper-tiny",
             "backend": "transformers",
             "family": "whisper",
             "n": 30,
@@ -2823,6 +3588,7 @@
             "latency_ms_p90": 1174.5630264282227,
             "gpu_peak_mem_mb": 98.0,
             "wall_time_s": 23.176724672317505,
+            "model_id": "openai/whisper-tiny",
             "model_url": "https://huggingface.co/openai/whisper-tiny"
           }
         ]

@@ -1,0 +1,49 @@
+{
+  "run_id": "en_cv22",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 23,
+  "datasets": [
+    "common_voice_22_en"
+  ],
+  "models": [
+    "distil-large-v3",
+    "fw-distil-large-v3",
+    "fw-large-v3",
+    "fw-large-v3-turbo",
+    "parakeet-ctc-0.6b",
+    "parakeet-ctc-1.1b",
+    "parakeet-rnnt-0.6b",
+    "parakeet-rnnt-1.1b",
+    "parakeet-tdt-0.6b-v2",
+    "parakeet-tdt-0.6b-v3",
+    "parakeet-tdt-1.1b",
+    "parakeet-tdt_ctc-110m",
+    "whisper-base",
+    "whisper-base.en",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "whisper-medium",
+    "whisper-medium.en",
+    "whisper-small",
+    "whisper-small.en",
+    "whisper-tiny",
+    "whisper-tiny.en"
+  ],
+  "best_per_dataset": {
+    "common_voice_22_en": {
+      "best_wer": {
+        "model": "parakeet-rnnt-1.1b",
+        "wer": 0.06274509803921569
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-ctc-0.6b",
+        "rtfx_mean": 71.43913606447087
+      },
+      "smallest_gpu": {
+        "model": "parakeet-ctc-0.6b",
+        "gpu_peak_mem_mb": 28.0
+      }
+    }
+  }
+}
