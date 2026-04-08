@@ -1,0 +1,66 @@
+{
+  "run_id": "lt",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 30,
+  "datasets": [
+    "common_voice_22_lt",
+    "fleurs_lt",
+    "voxpopuli_lt"
+  ],
+  "models": [
+    "fw-large-v3",
+    "fw-large-v3-turbo",
+    "parakeet-tdt-0.6b-v3",
+    "whisper-base",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "whisper-medium",
+    "whisper-small",
+    "whisper-tiny"
+  ],
+  "best_per_dataset": {
+    "fleurs_lt": {
+      "best_wer": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "wer": 0.1927007299270073
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "rtfx_mean": 60.87975099328621
+      },
+      "smallest_gpu": {
+        "model": "whisper-tiny",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "common_voice_22_lt": {
+      "best_wer": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "wer": 0.27488151658767773
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "rtfx_mean": 40.97234889944784
+      },
+      "smallest_gpu": {
+        "model": "whisper-small",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "voxpopuli_lt": {
+      "best_wer": {
+        "model": "fw-large-v3",
+        "wer": 0.25591098748261476
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "rtfx_mean": 57.65596635291415
+      },
+      "smallest_gpu": {
+        "model": "whisper-tiny",
+        "gpu_peak_mem_mb": 98.0
+      }
+    }
+  }
+}
