@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>speechbench — cross-model ASR comparison</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 <style>
   :root {
     --bg: #0f1419;
@@ -18,7 +19,15 @@
     --green: #56d364;
     --red: #f85149;
     --orange: #f0883e;
+    --purple: #bc8cff;
+    --teal: #76e3c8;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --color-whisper: #58a6ff;
+    --color-faster-whisper: #76e3c8;
+    --color-parakeet: #56d364;
+    --color-gemma: #f0883e;
+    --color-qwen: #bc8cff;
+    --color-other: #8b949e;
   }
   @media (prefers-color-scheme: light) {
     :root {
@@ -33,6 +42,14 @@
       --green: #1a7f37;
       --red: #cf222e;
       --orange: #bc4c00;
+      --purple: #8250df;
+      --teal: #1a8870;
+      --color-whisper: #0969da;
+      --color-faster-whisper: #1a8870;
+      --color-parakeet: #1a7f37;
+      --color-gemma: #bc4c00;
+      --color-qwen: #8250df;
+      --color-other: #656d76;
     }
   }
   html, body {
@@ -77,6 +94,32 @@
     margin-top: 10px;
   }
   header .meta strong { color: var(--text); font-weight: 600; }
+  .lang-switch {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--panel);
+    margin: 16px 0 0 0;
+  }
+  .lang-switch button {
+    background: transparent;
+    border: 0;
+    color: var(--text-dim);
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lang-switch button:not(:last-child) {
+    border-right: 1px solid var(--border);
+  }
+  .lang-switch button.active {
+    background: var(--panel-2);
+    color: var(--text);
+  }
+  .lang-switch button:hover:not(.active) { color: var(--text); }
   main {
     max-width: 1100px;
     margin: 0 auto;
@@ -111,19 +154,31 @@
     font-size: 14px;
     margin: 4px 0 0 0;
   }
+  .chart-wrap {
+    padding: 22px 22px 14px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .chart-grid { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .chart-cell h3 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .chart-cell canvas { max-width: 100%; }
   .table-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    /* Scrollbar hint on iOS/macOS: a subtle shadow on the right edge when
-       there's more content off-screen. */
-    background:
-      linear-gradient(to right, var(--panel) 30%, transparent),
-      linear-gradient(to right, transparent, var(--panel) 70%) right,
-      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.15), transparent),
-      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.15), transparent) right;
-    background-repeat: no-repeat;
-    background-size: 40px 100%, 40px 100%, 16px 100%, 16px 100%;
-    background-attachment: local, local, scroll, scroll;
   }
   table {
     width: 100%;
@@ -157,17 +212,6 @@
   tbody tr:hover { background: var(--panel-2); }
   tbody tr.best td.num.wer { color: var(--green); font-weight: 600; }
   tbody tr.hallucinate td.num.wer { color: var(--red); font-weight: 600; }
-  @media (max-width: 720px) {
-    header { padding: 28px 16px 12px 16px; }
-    header h1 { font-size: 24px; }
-    main { padding: 0 16px 48px 16px; }
-    th, td { padding: 8px 10px; font-size: 12px; }
-    th:first-child, td:first-child { padding-left: 14px; }
-    th:last-child, td:last-child { padding-right: 14px; }
-    section.dataset header.ds-header { padding: 16px; }
-    section.dataset h2 { font-size: 17px; }
-    section.dataset h2 .ds-key { display: block; margin: 2px 0 0 0; }
-  }
   .backend-tag {
     display: inline-block;
     padding: 1px 6px;
@@ -181,9 +225,20 @@
     border: 1px solid var(--border);
     margin-left: 6px;
   }
-  .backend-tag.nemo { color: #76e3c8; border-color: rgba(118, 227, 200, 0.3); }
-  .backend-tag.transformers { color: var(--accent-2); border-color: rgba(121, 192, 255, 0.3); }
-  .backend-tag.faster-whisper { color: var(--orange); border-color: rgba(240, 136, 62, 0.3); }
+  .backend-tag.nemo { color: var(--color-parakeet); border-color: rgba(86, 211, 100, 0.3); }
+  .backend-tag.transformers { color: var(--color-whisper); border-color: rgba(88, 166, 255, 0.3); }
+  .backend-tag.faster-whisper { color: var(--color-faster-whisper); border-color: rgba(118, 227, 200, 0.3); }
+  .backend-tag.dashscope-api { color: var(--color-qwen); border-color: rgba(188, 140, 255, 0.3); }
+  .empty-state {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--text-dim);
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    margin: 36px 0;
+  }
+  .empty-state h3 { color: var(--text); margin: 0 0 6px 0; }
   footer {
     max-width: 1100px;
     margin: 0 auto;
@@ -206,6 +261,18 @@
     border-radius: 3px;
     border: 1px solid var(--border);
   }
+  @media (max-width: 720px) {
+    header { padding: 28px 16px 12px 16px; }
+    header h1 { font-size: 24px; }
+    main { padding: 0 16px 48px 16px; }
+    th, td { padding: 8px 10px; font-size: 12px; }
+    th:first-child, td:first-child { padding-left: 14px; }
+    th:last-child, td:last-child { padding-right: 14px; }
+    .chart-wrap { padding: 16px; }
+    section.dataset header.ds-header { padding: 16px; }
+    section.dataset h2 { font-size: 17px; }
+    section.dataset h2 .ds-key { display: block; margin: 2px 0 0 0; }
+  }
 </style>
 </head>
 <body>
@@ -213,18 +280,21 @@
 <header>
   <h1>speechbench</h1>
   <div class="tagline">
-    Cross-model ASR comparison — 21 models × 5 datasets × 30 clips each, all on a single GCP T4 spot VM.
+    Cross-model ASR comparison — every model × every dataset × 30 clips, on a single GCP T4 spot VM.
   </div>
 
   <div class="meta">
-    <div>Run: <strong id="meta-run">full</strong></div>
     <div>Hardware: <strong id="meta-hw">T4 spot</strong></div>
     <div>Project: <strong id="meta-proj">safecare-maps</strong></div>
+    <div>Generated: <strong id="meta-gen">-</strong></div>
     <div>Source: <strong><a id="meta-repo" href="https://github.com/jasontitus/speechbench">github.com/jasontitus/speechbench</a></strong></div>
   </div>
 
+  <div id="lang-switch" class="lang-switch"><!-- buttons populated by JS --></div>
+
   <p class="tips">
-    Tables are sortable — click any column header. Green = best WER in the dataset. Red = hallucination (WER &gt; 100% means the model generated more output than the reference).
+    Tables are sortable — click any column header. Charts show WER and RTFx per model, color-coded by family.
+    Green = best WER in the dataset. Red = hallucination (WER &gt; 100% means the model generated more output than the reference).
     Model names link to their HuggingFace pages. Dataset titles link to their HF datasets.
   </p>
 </header>
@@ -240,10 +310,10 @@
     evaluated on a single <strong>NVIDIA T4</strong> spot VM
     (<code>n1-standard-8</code>, 30 GB RAM) in <code>safecare-maps</code>, us-central1-a.
     Raw per-clip transcripts (with punctuation preserved) are in
-    <a href="https://github.com/jasontitus/speechbench/tree/main/results/full/raw">results/full/raw/</a> on GitHub.
+    <a href="https://github.com/jasontitus/speechbench/tree/main/results">results/</a> on GitHub.
   </p>
   <p>
-    WER is computed on Whisper-style English-normalized text (lowercase, punctuation stripped, contractions expanded) via <code>jiwer</code>.
+    WER is computed on Whisper-style normalized text (lowercase, punctuation stripped, contractions expanded) via <code>jiwer</code>.
     RTFx = audio seconds / wall seconds — higher is faster than real-time.
     GPU peak is measured via <code>pynvml</code> at 100ms intervals during inference.
   </p>
@@ -278,6 +348,121 @@ function fmt(val, type) {
   }
 }
 
+function familyColor(family) {
+  const map = {
+    whisper: "--color-whisper",
+    "faster-whisper": "--color-faster-whisper",
+    parakeet: "--color-parakeet",
+    gemma: "--color-gemma",
+    qwen: "--color-qwen",
+  };
+  const v = getComputedStyle(document.documentElement).getPropertyValue(map[family] || "--color-other").trim();
+  return v || "#8b949e";
+}
+
+function buildTableRow(row, tbody, bestWer) {
+  const tr = document.createElement("tr");
+  if (bestWer != null && Math.abs(row.wer - bestWer) < 1e-9) tr.classList.add("best");
+  if (row.wer != null && row.wer > 1.0) tr.classList.add("hallucinate");
+  COLUMNS.forEach((col) => {
+    const td = document.createElement("td");
+    if (col.type === "model") {
+      td.className = "model";
+      if (row.model_url) {
+        const a = document.createElement("a");
+        a.href = row.model_url;
+        a.textContent = row.model_key;
+        a.target = "_blank"; a.rel = "noopener";
+        td.appendChild(a);
+      } else {
+        td.textContent = row.model_key;
+      }
+    } else if (col.type === "backend") {
+      const tag = document.createElement("span");
+      tag.className = `backend-tag ${row.backend}`;
+      tag.textContent = row.backend;
+      td.appendChild(tag);
+    } else {
+      td.className = "num" + (col.cls ? " " + col.cls : "");
+      td.textContent = fmt(row[col.key], col.type);
+    }
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+
+function buildChartsCell(metric, rows, title, axisLabel, isPercent, clampMax) {
+  const cell = document.createElement("div");
+  cell.className = "chart-cell";
+  const h3 = document.createElement("h3");
+  h3.textContent = title;
+  cell.appendChild(h3);
+  const canvas = document.createElement("canvas");
+  cell.appendChild(canvas);
+
+  // Sort rows ascending by metric for WER; descending for RTFx
+  const sorted = rows.slice().filter(r => r[metric] != null).sort((a, b) => {
+    if (metric === "wer") return a.wer - b.wer;
+    return b[metric] - a[metric];
+  });
+  const labels = sorted.map(r => r.model_key);
+  const values = sorted.map(r => isPercent ? r[metric] * 100 : r[metric]);
+  const colors = sorted.map(r => familyColor(r.family));
+
+  const rootStyle = getComputedStyle(document.documentElement);
+  const textColor = rootStyle.getPropertyValue("--text-dim").trim() || "#8b949e";
+  const gridColor = rootStyle.getPropertyValue("--border").trim() || "#2a333f";
+
+  const ctx = canvas.getContext("2d");
+  const maxVal = clampMax ? Math.min(Math.max(...values) * 1.1, clampMax) : Math.max(...values) * 1.1;
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: axisLabel,
+        data: values,
+        backgroundColor: colors,
+        borderColor: colors,
+        borderWidth: 1,
+      }],
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const v = ctx.parsed.x;
+              return isPercent ? `${v.toFixed(2)}%` : `${v.toFixed(1)}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: maxVal,
+          ticks: { color: textColor, font: { size: 11 } },
+          grid: { color: gridColor },
+          title: { display: true, text: axisLabel, color: textColor, font: { size: 11 } },
+        },
+        y: {
+          ticks: { color: textColor, font: { size: 11, family: "ui-monospace, SFMono-Regular, Menlo, monospace" } },
+          grid: { display: false },
+        },
+      },
+    },
+  });
+  // Dynamic height: ~22px per row, min 220
+  canvas.parentElement.style.minHeight = Math.max(220, 22 * rows.length + 50) + "px";
+  canvas.style.height = Math.max(220, 22 * rows.length + 50) + "px";
+  return cell;
+}
+
 function buildDatasetSection(key, spec, rows) {
   const section = document.createElement("section");
   section.className = "dataset";
@@ -292,6 +477,16 @@ function buildDatasetSection(key, spec, rows) {
   desc.textContent = spec.description;
   header.appendChild(desc);
   section.appendChild(header);
+
+  // Charts grid (WER + RTFx)
+  const chartWrap = document.createElement("div");
+  chartWrap.className = "chart-wrap";
+  const chartGrid = document.createElement("div");
+  chartGrid.className = "chart-grid";
+  chartGrid.appendChild(buildChartsCell("wer", rows, "WER (lower is better)", "WER %", true, 100));
+  chartGrid.appendChild(buildChartsCell("rtfx_mean", rows, "RTFx (higher is faster than real-time)", "RTFx", false, null));
+  chartWrap.appendChild(chartGrid);
+  section.appendChild(chartWrap);
 
   const tableWrap = document.createElement("div");
   tableWrap.className = "table-scroll";
@@ -308,46 +503,14 @@ function buildDatasetSection(key, spec, rows) {
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
-  // compute best WER (excluding hallucinations > 1.0)
   const valid = rows.filter(r => r.wer != null && r.wer <= 1.0);
   const bestWer = valid.length ? Math.min(...valid.map(r => r.wer)) : null;
-
-  rows.forEach((row) => {
-    const tr = document.createElement("tr");
-    if (bestWer != null && Math.abs(row.wer - bestWer) < 1e-9) tr.classList.add("best");
-    if (row.wer != null && row.wer > 1.0) tr.classList.add("hallucinate");
-    COLUMNS.forEach((col) => {
-      const td = document.createElement("td");
-      if (col.type === "model") {
-        td.className = "model";
-        if (row.model_url) {
-          const a = document.createElement("a");
-          a.href = row.model_url;
-          a.textContent = row.model_key;
-          a.target = "_blank";
-          a.rel = "noopener";
-          td.appendChild(a);
-        } else {
-          td.textContent = row.model_key;
-        }
-      } else if (col.type === "backend") {
-        const tag = document.createElement("span");
-        tag.className = `backend-tag ${row.backend}`;
-        tag.textContent = row.backend;
-        td.appendChild(tag);
-      } else {
-        td.className = "num" + (col.cls ? " " + col.cls : "");
-        td.textContent = fmt(row[col.key], col.type);
-      }
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
+  rows.forEach((row) => buildTableRow(row, tbody, bestWer));
   table.appendChild(tbody);
   tableWrap.appendChild(table);
   section.appendChild(tableWrap);
 
-  // click-to-sort
+  // Click-to-sort
   thead.querySelectorAll("th").forEach((th) => {
     th.addEventListener("click", () => {
       const idx = parseInt(th.dataset.colIdx, 10);
@@ -366,67 +529,77 @@ function buildDatasetSection(key, spec, rows) {
         }
         return ascending ? av - bv : bv - av;
       });
-      // Rebuild tbody
       tbody.innerHTML = "";
-      rows.forEach((row) => {
-        const tr = document.createElement("tr");
-        if (bestWer != null && Math.abs(row.wer - bestWer) < 1e-9) tr.classList.add("best");
-        if (row.wer != null && row.wer > 1.0) tr.classList.add("hallucinate");
-        COLUMNS.forEach((col) => {
-          const td = document.createElement("td");
-          if (col.type === "model") {
-            td.className = "model";
-            if (row.model_url) {
-              const a = document.createElement("a");
-              a.href = row.model_url;
-              a.textContent = row.model_key;
-              a.target = "_blank"; a.rel = "noopener";
-              td.appendChild(a);
-            } else { td.textContent = row.model_key; }
-          } else if (col.type === "backend") {
-            const tag = document.createElement("span");
-            tag.className = `backend-tag ${row.backend}`;
-            tag.textContent = row.backend;
-            td.appendChild(tag);
-          } else {
-            td.className = "num" + (col.cls ? " " + col.cls : "");
-            td.textContent = fmt(row[col.key], col.type);
-          }
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-      });
+      rows.forEach((row) => buildTableRow(row, tbody, bestWer));
     });
   });
 
   return section;
 }
 
+let currentData = null;
+let currentLang = "en";
+
+function render() {
+  const main = document.getElementById("main");
+  main.innerHTML = "";
+  const lang = currentData.languages[currentLang];
+  if (!lang || !lang.results || Object.keys(lang.results).length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.innerHTML = `<h3>No results yet for ${lang ? lang.label : currentLang}</h3><p>The sweep is either still running or hasn't been launched. Check back in a bit.</p>`;
+    main.appendChild(empty);
+    return;
+  }
+  for (const key of lang.dataset_order || Object.keys(lang.results)) {
+    const rows = lang.results[key];
+    if (!rows || !rows.length) continue;
+    const sorted = rows.slice().sort((a, b) => {
+      const aHallu = a.wer > 1.0 ? 1 : 0;
+      const bHallu = b.wer > 1.0 ? 1 : 0;
+      if (aHallu !== bHallu) return aHallu - bHallu;
+      return (a.wer ?? 99) - (b.wer ?? 99);
+    });
+    const spec = currentData.datasets[key] || { title: key, description: "", url: "#" };
+    main.appendChild(buildDatasetSection(key, spec, sorted));
+  }
+}
+
+function buildLangSwitch() {
+  const container = document.getElementById("lang-switch");
+  container.innerHTML = "";
+  const langs = Object.entries(currentData.languages);
+  for (const [code, lang] of langs) {
+    const btn = document.createElement("button");
+    btn.textContent = lang.label;
+    if (code === currentLang) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      currentLang = code;
+      buildLangSwitch();
+      render();
+    });
+    container.appendChild(btn);
+  }
+}
+
 async function main() {
   try {
     const resp = await fetch("results.json?t=" + Date.now());
-    const data = await resp.json();
-    document.getElementById("meta-run").textContent = data.run_id || "";
-    document.getElementById("meta-hw").textContent = data.hardware || "";
-    document.getElementById("meta-proj").textContent = data.project || "";
-    document.getElementById("meta-repo").href = data.source_repo || "#";
-
-    const main = document.getElementById("main");
-    // Order: LS-clean, LS-other, AMI IHM, Earnings22, VoxPopuli en
-    const order = ["librispeech_clean", "librispeech_other", "ami_ihm", "earnings22", "voxpopuli_en"];
-    for (const key of order) {
-      const rows = data.results[key];
-      if (!rows || !rows.length) continue;
-      // Default sort: WER ascending, hallucinations last
-      const sorted = rows.slice().sort((a, b) => {
-        const aHallu = a.wer > 1.0 ? 1 : 0;
-        const bHallu = b.wer > 1.0 ? 1 : 0;
-        if (aHallu !== bHallu) return aHallu - bHallu;
-        return (a.wer ?? 99) - (b.wer ?? 99);
+    currentData = await resp.json();
+    document.getElementById("meta-hw").textContent = currentData.hardware || "";
+    document.getElementById("meta-proj").textContent = currentData.project || "";
+    document.getElementById("meta-gen").textContent = currentData.generated_at || "";
+    document.getElementById("meta-repo").href = currentData.source_repo || "#";
+    buildLangSwitch();
+    // Wait for Chart.js to be ready before first render
+    if (typeof Chart === "undefined") {
+      await new Promise(resolve => {
+        const check = setInterval(() => {
+          if (typeof Chart !== "undefined") { clearInterval(check); resolve(); }
+        }, 50);
       });
-      const spec = data.datasets[key] || { title: key, description: "", url: "#" };
-      main.appendChild(buildDatasetSection(key, spec, sorted));
     }
+    render();
   } catch (e) {
     document.getElementById("main").innerHTML = "<p style='color:var(--red)'>Failed to load results.json: " + e.message + "</p>";
   }

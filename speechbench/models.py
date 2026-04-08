@@ -88,7 +88,13 @@ class ASRModel(ABC):
     def load(self) -> None: ...
 
     @abstractmethod
-    def transcribe(self, audio, sample_rate: int = 16000) -> str: ...
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
+        """Transcribe an audio array.
+
+        `language` is a full English name ("english", "spanish", …). Multilingual
+        models use it to set the decoder prefix. English-only models (Whisper .en,
+        parakeet English-only variants) ignore it.
+        """
 
     def unload(self) -> None:
         gc.collect()
@@ -141,11 +147,11 @@ class HFWhisperModel(ASRModel):
             return_timestamps=False,
         )
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         # The HF ASR pipeline accepts a numpy array via {"array": ..., "sampling_rate": ...}.
         # English-only Whisper variants (".en") reject `language`/`task` kwargs.
         is_english_only = self.spec.hf_id.endswith(".en")
-        gen_kwargs = {} if is_english_only else {"language": "english", "task": "transcribe"}
+        gen_kwargs = {} if is_english_only else {"language": language, "task": "transcribe"}
         out = self._pipe(
             {"array": audio, "sampling_rate": sample_rate},
             generate_kwargs=gen_kwargs,
@@ -211,13 +217,20 @@ class MLXWhisperModel(ASRModel):
             f"tried {self._candidates}; last error: {last_err}"
         )
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         import mlx_whisper  # type: ignore
 
+        # mlx-whisper uses 2-letter ISO codes: "en", "es", ...
+        lang_code = {
+            "english": "en",
+            "spanish": "es",
+            "french": "fr",
+            "german": "de",
+        }.get(language, language[:2] if len(language) >= 2 else "en")
         result = mlx_whisper.transcribe(
             audio,
             path_or_hf_repo=self._mlx_repo,
-            language="en",
+            language=lang_code,
             verbose=False,
         )
         return (result.get("text") or "").strip()
@@ -265,7 +278,7 @@ class MLXQwen3ASRModel(ASRModel):
                     )
                 self._model = cls.from_pretrained(self._mlx_repo)
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         # mlx-qwen3-asr accepts a numpy float32 16k array OR a file path.
         # Try the most common method names.
         for fn_name in ("transcribe", "generate", "__call__"):
@@ -318,11 +331,18 @@ class FasterWhisperModel(ASRModel):
             compute_type=compute_type,
         )
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
-        # faster-whisper accepts a numpy float32 array directly.
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
+        # faster-whisper accepts a numpy float32 array directly. It expects
+        # 2-letter ISO language codes ("en", "es", …).
+        lang_code = {
+            "english": "en",
+            "spanish": "es",
+            "french": "fr",
+            "german": "de",
+        }.get(language, language[:2] if len(language) >= 2 else "en")
         segments, _info = self._model.transcribe(
             audio,
-            language="en",
+            language=lang_code,
             beam_size=5,
             vad_filter=False,
         )
@@ -355,7 +375,7 @@ class NeMoParakeetModel(ASRModel):
         except Exception:
             pass
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         import soundfile as sf  # type: ignore
 
         # NeMo's transcribe() takes a list of file paths.
@@ -412,10 +432,11 @@ class Qwen3ASRModel(ASRModel):
         )
         self._model.eval()
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         import torch  # type: ignore
 
-        prompt = "Transcribe the audio in English. Output only the transcription."
+        lang_label = language.capitalize() if language else "English"
+        prompt = f"Transcribe the audio in {lang_label}. Output only the transcription."
         conversation = [
             {
                 "role": "user",
@@ -456,7 +477,10 @@ class Qwen3ASRModel(ASRModel):
 class Gemma4AudioModel(ASRModel):
     """Gemma 4 E2B/E4B IT — audio-capable multimodal LLM. Prompt for transcription."""
 
-    PROMPT = "Transcribe the audio exactly as spoken. Output only the transcription, no preamble or commentary."
+    PROMPT_TEMPLATE = (
+        "Transcribe the audio{lang_hint} exactly as spoken. "
+        "Output only the transcription, no preamble or commentary."
+    )
     CHUNK_SECONDS = 28.0
     OVERLAP_SECONDS = 0.5
 
@@ -505,15 +529,17 @@ class Gemma4AudioModel(ASRModel):
         )
         self._model.eval()
 
-    def _transcribe_chunk(self, audio_chunk, sample_rate: int) -> str:
+    def _transcribe_chunk(self, audio_chunk, sample_rate: int, language: str = "english") -> str:
         import torch  # type: ignore
 
+        lang_hint = f" in {language.capitalize()}" if language and language != "english" else ""
+        prompt = self.PROMPT_TEMPLATE.format(lang_hint=lang_hint)
         conversation = [
             {
                 "role": "user",
                 "content": [
                     {"type": "audio", "audio": audio_chunk},
-                    {"type": "text", "text": self.PROMPT},
+                    {"type": "text", "text": prompt},
                 ],
             }
         ]
@@ -536,10 +562,10 @@ class Gemma4AudioModel(ASRModel):
         text = self._processor.batch_decode(gen, skip_special_tokens=True)[0]
         return text.strip()
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         chunk_len = int(self.CHUNK_SECONDS * sample_rate)
         if len(audio) <= chunk_len:
-            return self._transcribe_chunk(audio, sample_rate)
+            return self._transcribe_chunk(audio, sample_rate, language)
 
         step = chunk_len - int(self.OVERLAP_SECONDS * sample_rate)
         parts: list[str] = []
@@ -547,7 +573,7 @@ class Gemma4AudioModel(ASRModel):
             chunk = audio[start : start + chunk_len]
             if len(chunk) < int(0.2 * sample_rate):
                 break
-            parts.append(self._transcribe_chunk(chunk, sample_rate))
+            parts.append(self._transcribe_chunk(chunk, sample_rate, language))
         return " ".join(p for p in parts if p).strip()
 
     def unload(self) -> None:
@@ -588,7 +614,7 @@ class DashScopeOmniModel(ASRModel):
         )
         self._client = OpenAI(api_key=api_key, base_url=base_url)
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         import base64
         import io
 
@@ -671,11 +697,16 @@ def _register(specs: list[ModelSpec]) -> None:
 
 _register(
     [
-        # Whisper — HF transformers
+        # Whisper — HF transformers (English-only variants)
         _whisper("whisper-tiny.en", "openai/whisper-tiny.en", 2, 0.020, 25),
         _whisper("whisper-base.en", "openai/whisper-base.en", 2, 0.025, 25),
         _whisper("whisper-small.en", "openai/whisper-small.en", 3, 0.040, 30),
         _whisper("whisper-medium.en", "openai/whisper-medium.en", 5, 0.070, 40),
+        # Whisper — HF transformers (multilingual variants — needed for Spanish etc.)
+        _whisper("whisper-tiny", "openai/whisper-tiny", 2, 0.020, 25),
+        _whisper("whisper-base", "openai/whisper-base", 2, 0.025, 25),
+        _whisper("whisper-small", "openai/whisper-small", 3, 0.040, 30),
+        _whisper("whisper-medium", "openai/whisper-medium", 5, 0.070, 40),
         _whisper("whisper-large-v2", "openai/whisper-large-v2", 8, 0.110, 60),
         _whisper("whisper-large-v3", "openai/whisper-large-v3", 8, 0.110, 60),
         _whisper("whisper-large-v3-turbo", "openai/whisper-large-v3-turbo", 8, 0.050, 60),
@@ -789,7 +820,7 @@ class SkippedModel(ASRModel):
     def load(self) -> None:
         raise RuntimeError(f"skipped: {self._reason}")
 
-    def transcribe(self, audio, sample_rate: int = 16000) -> str:
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         raise RuntimeError(f"skipped: {self._reason}")
 
 

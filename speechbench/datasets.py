@@ -49,6 +49,10 @@ class DatasetSpec:
     requires_auth: bool = False  # gated dataset → may need HF token
     description: str = ""
     loader: Optional[Callable] = None  # override the default loader
+    # Language hint used by multilingual models (Whisper, Gemma 4, etc.) to
+    # set the right decoder prefix. For English-only datasets this stays
+    # "english" (the default). For Spanish datasets: "spanish".
+    language: str = "english"
 
     def make_job_id_part(self, sample_cap: int) -> str:
         return f"{self.key}@{sample_cap}"
@@ -188,6 +192,48 @@ DATASETS: dict[str, DatasetSpec] = {
         default_cap=300,
         requires_auth=True,
         description="SPGISpeech — financial filings audio. Gated.",
+    ),
+    # ─── Spanish ──────────────────────────────────────────────────────────
+    "mls_es": DatasetSpec(
+        key="mls_es",
+        hf_dataset="facebook/multilingual_librispeech",
+        hf_config="spanish",
+        split="test",
+        text_field="transcript",
+        default_cap=300,
+        language="spanish",
+        description="Multilingual LibriSpeech — Spanish test set (audiobooks).",
+    ),
+    "voxpopuli_es": DatasetSpec(
+        key="voxpopuli_es",
+        hf_dataset="facebook/voxpopuli",
+        hf_config="es",
+        split="test",
+        text_field="normalized_text",
+        default_cap=300,
+        language="spanish",
+        description="VoxPopuli — European parliament speeches in Spanish.",
+    ),
+    "fleurs_es": DatasetSpec(
+        key="fleurs_es",
+        hf_dataset="google/fleurs",
+        hf_config="es_419",
+        split="test",
+        text_field="transcription",
+        default_cap=300,
+        language="spanish",
+        description="FLEURS Spanish (es_419) — 102-language multilingual ASR benchmark.",
+    ),
+    "common_voice_17_es": DatasetSpec(
+        key="common_voice_17_es",
+        hf_dataset="mozilla-foundation/common_voice_17_0",
+        hf_config="es",
+        split="test",
+        text_field="sentence",
+        default_cap=300,
+        language="spanish",
+        requires_auth=True,
+        description="Common Voice 17 — Spanish. Crowd-sourced read speech. Gated (needs HF token).",
     ),
 }
 

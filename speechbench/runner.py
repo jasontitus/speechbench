@@ -170,12 +170,13 @@ def run_job(
     sampler.reset_peak()
     inference_start = time.time()
 
+    lang = getattr(dataset_spec, "language", "english") or "english"
     for clip_id, audio, ref_raw, audio_seconds in load(dataset_spec, sample_cap):
         try:
             t0 = time.time()
             # Per-clip timeout: 5 minutes is generous for any reasonable model.
             with time_limit(300):
-                hyp_raw = model.transcribe(audio, sample_rate=16000)
+                hyp_raw = model.transcribe(audio, sample_rate=16000, language=lang)
             t1 = time.time()
             latency_ms = (t1 - t0) * 1000.0
             ref_norm = normalize_text(ref_raw)
