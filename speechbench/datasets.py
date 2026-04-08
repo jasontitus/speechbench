@@ -53,9 +53,124 @@ class DatasetSpec:
     # set the right decoder prefix. For English-only datasets this stays
     # "english" (the default). For Spanish datasets: "spanish".
     language: str = "english"
+    # Some HF datasets (google/fleurs) ship a custom loading script that
+    # needs trust_remote_code=True. Others (fsicoli/common_voice_22_0) ship
+    # a script whose cast is broken — they work BETTER with
+    # trust_remote_code=False (datasets library auto-detects parquet).
+    # Default True (most datasets either need it or don't care).
+    trust_remote_code: bool = True
 
     def make_job_id_part(self, sample_cap: int) -> str:
         return f"{self.key}@{sample_cap}"
+
+
+def _common_voice_22_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSample]:
+    """Custom loader for fsicoli/common_voice_22_0.
+
+    The fsicoli mirror ships its data as `transcript/{lang}/test.tsv` +
+    `audio/{lang}/test/{lang}_test_{shard}.tar` and includes a custom
+    dataset script that the HF `datasets` library can no longer load
+    reliably (schema cast mismatches on up_votes/down_votes columns).
+
+    This loader bypasses the script entirely: it downloads the TSV, streams
+    the tar file(s) with the test audio, extracts mp3s on the fly, and
+    yields (clip_id, audio16k, sentence, seconds) tuples. The
+    `requires_auth`/`trust_remote_code` flags don't apply because we're
+    fetching raw files via `huggingface_hub.hf_hub_download`.
+    """
+    import csv as _csv
+    import tarfile
+    import tempfile
+    import os as _os
+
+    from huggingface_hub import hf_hub_download  # type: ignore
+    import librosa  # type: ignore
+    import soundfile as sf  # type: ignore
+
+    np = _lazy_np()
+
+    lang = spec.hf_config or "en"
+    split = spec.split
+
+    # 1. Grab the TSV (tiny — typically < 1 MB).
+    tsv_path = hf_hub_download(
+        repo_id=spec.hf_dataset,
+        repo_type="dataset",
+        filename=f"transcript/{lang}/{split}.tsv",
+    )
+
+    # 2. Read TSV → list of (path, sentence) pairs. Keep order so the
+    # sample_cap slice is deterministic across runs.
+    rows: list[tuple[str, str]] = []
+    with open(tsv_path, newline="", encoding="utf-8") as f:
+        reader = _csv.DictReader(f, delimiter="\t")
+        for r in reader:
+            path = r.get("path") or ""
+            sent = r.get("sentence") or r.get("sentence_raw") or ""
+            if path and sent:
+                rows.append((path, sent))
+            if sample_cap and len(rows) >= sample_cap * 4:
+                # Read a few × cap so we can still fill after skipping
+                # any rows whose audio is missing. 4× is plenty in practice.
+                break
+
+    # 3. Build a lookup of path → row index for the rows we want.
+    wanted = {p for p, _ in rows}
+
+    # 4. Download the first tar shard and extract only the audio files we
+    # care about. (In practice the test split is always one shard; if not,
+    # we walk shards until we've found everything.)
+    shard_idx = 0
+    found: dict[str, tuple[str, str]] = {}  # path -> (tmp_path, sentence)
+    sentence_by_path = {p: s for p, s in rows}
+    tmpdir = tempfile.mkdtemp(prefix="cv22_")
+    while len(found) < min(len(rows), sample_cap * 2 if sample_cap else len(rows)):
+        try:
+            tar_path = hf_hub_download(
+                repo_id=spec.hf_dataset,
+                repo_type="dataset",
+                filename=f"audio/{lang}/{split}/{lang}_{split}_{shard_idx}.tar",
+            )
+        except Exception:
+            break  # No more shards.
+        with tarfile.open(tar_path, mode="r") as tf:
+            for member in tf:
+                if not member.isfile():
+                    continue
+                name = _os.path.basename(member.name)
+                if name in wanted and name not in found:
+                    tf.extract(member, path=tmpdir, set_attrs=False)
+                    found[name] = (_os.path.join(tmpdir, member.name), sentence_by_path[name])
+                    if sample_cap and len(found) >= sample_cap * 2:
+                        break
+        shard_idx += 1
+        if shard_idx > 20:  # safety valve
+            break
+
+    # 5. Yield samples in TSV order, decoding mp3 → 16 kHz float32.
+    n = 0
+    for path, sentence in rows:
+        if sample_cap and n >= sample_cap:
+            break
+        if path not in found:
+            continue
+        mp3_path, _ = found[path]
+        try:
+            audio, sr = librosa.load(mp3_path, sr=16000, mono=True)
+        except Exception:
+            try:
+                audio, sr = sf.read(mp3_path)
+                if sr != 16000:
+                    audio = librosa.resample(
+                        audio.astype("float32"), orig_sr=sr, target_sr=16000
+                    )
+            except Exception:
+                continue
+        if audio is None or len(audio) == 0:
+            continue
+        duration = float(len(audio) / 16000.0)
+        yield (path, np.asarray(audio, dtype="float32"), sentence, duration)
+        n += 1
 
 
 def _default_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSample]:
@@ -68,9 +183,9 @@ def _default_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSampl
     kwargs = {}
     # Use streaming so we never download a whole dataset just to take 200 clips
     kwargs["streaming"] = True
-    # Some datasets (google/fleurs, fsicoli/common_voice_*) ship their own
-    # loading script on the Hub and refuse to load without trust_remote_code.
-    kwargs["trust_remote_code"] = True
+    # Per-dataset opt-in. google/fleurs needs it True; fsicoli/common_voice_22_0
+    # needs it False (their script's cast schema doesn't match the parquet).
+    kwargs["trust_remote_code"] = getattr(spec, "trust_remote_code", True)
 
     if spec.hf_config:
         ds = load_dataset(spec.hf_dataset, spec.hf_config, split=spec.split, **kwargs)
@@ -199,6 +314,8 @@ DATASETS: dict[str, DatasetSpec] = {
     "common_voice_22_en": DatasetSpec(
         key="common_voice_22_en",
         hf_dataset="fsicoli/common_voice_22_0",
+        trust_remote_code=False,
+        loader=lambda spec, cap: _common_voice_22_loader(spec, cap),
         hf_config="en",
         split="test",
         text_field="sentence",
@@ -241,6 +358,8 @@ DATASETS: dict[str, DatasetSpec] = {
     "common_voice_22_es": DatasetSpec(
         key="common_voice_22_es",
         hf_dataset="fsicoli/common_voice_22_0",
+        trust_remote_code=False,
+        loader=lambda spec, cap: _common_voice_22_loader(spec, cap),
         hf_config="es",
         split="test",
         text_field="sentence",
@@ -273,6 +392,8 @@ DATASETS: dict[str, DatasetSpec] = {
     "common_voice_22_lt": DatasetSpec(
         key="common_voice_22_lt",
         hf_dataset="fsicoli/common_voice_22_0",
+        trust_remote_code=False,
+        loader=lambda spec, cap: _common_voice_22_loader(spec, cap),
         hf_config="lt",
         split="test",
         text_field="sentence",
