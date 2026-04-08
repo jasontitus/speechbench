@@ -1,0 +1,54 @@
+{
+  "run_id": "es",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 36,
+  "datasets": [
+    "fleurs_es",
+    "mls_es",
+    "voxpopuli_es"
+  ],
+  "models": [
+    "fw-large-v3",
+    "fw-large-v3-turbo",
+    "gemma-4-E2B-it",
+    "gemma-4-E4B-it",
+    "parakeet-tdt-0.6b-v3",
+    "whisper-base",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "whisper-medium",
+    "whisper-small",
+    "whisper-tiny"
+  ],
+  "best_per_dataset": {
+    "mls_es": {
+      "best_wer": {
+        "model": "fw-large-v3-turbo",
+        "wer": 0.019507186858316223
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "rtfx_mean": 77.02656047400629
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 30.0
+      }
+    },
+    "voxpopuli_es": {
+      "best_wer": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "wer": 0.05698529411764706
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "rtfx_mean": 63.933788716867774
+      },
+      "smallest_gpu": {
+        "model": "whisper-base",
+        "gpu_peak_mem_mb": 0.0
+      }
+    }
+  }
+}

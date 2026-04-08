@@ -68,6 +68,9 @@ def _default_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSampl
     kwargs = {}
     # Use streaming so we never download a whole dataset just to take 200 clips
     kwargs["streaming"] = True
+    # Some datasets (google/fleurs, fsicoli/common_voice_*) ship their own
+    # loading script on the Hub and refuse to load without trust_remote_code.
+    kwargs["trust_remote_code"] = True
 
     if spec.hf_config:
         ds = load_dataset(spec.hf_dataset, spec.hf_config, split=spec.split, **kwargs)
