@@ -1,0 +1,107 @@
+{
+  "run_id": "full",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 105,
+  "datasets": [
+    "ami_ihm",
+    "earnings22",
+    "librispeech_clean",
+    "librispeech_other",
+    "voxpopuli_en"
+  ],
+  "models": [
+    "distil-large-v3",
+    "fw-distil-large-v3",
+    "fw-large-v3",
+    "fw-large-v3-turbo",
+    "gemma-4-E2B-it",
+    "gemma-4-E4B-it",
+    "parakeet-ctc-0.6b",
+    "parakeet-ctc-1.1b",
+    "parakeet-rnnt-0.6b",
+    "parakeet-rnnt-1.1b",
+    "parakeet-tdt-0.6b-v2",
+    "parakeet-tdt-0.6b-v3",
+    "parakeet-tdt-1.1b",
+    "parakeet-tdt_ctc-110m",
+    "whisper-base.en",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "whisper-medium.en",
+    "whisper-small.en",
+    "whisper-tiny.en"
+  ],
+  "best_per_dataset": {
+    "ami_ihm": {
+      "best_wer": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "wer": 0.192
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-ctc-0.6b",
+        "rtfx_mean": 15.481653353478189
+      },
+      "smallest_gpu": {
+        "model": "parakeet-ctc-1.1b",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "voxpopuli_en": {
+      "best_wer": {
+        "model": "parakeet-rnnt-0.6b",
+        "wer": 0.05063291139240506
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-ctc-0.6b",
+        "rtfx_mean": 94.09991952602147
+      },
+      "smallest_gpu": {
+        "model": "parakeet-rnnt-1.1b",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "librispeech_clean": {
+      "best_wer": {
+        "model": "parakeet-ctc-0.6b",
+        "wer": 0.014778325123152709
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-ctc-0.6b",
+        "rtfx_mean": 67.07057421267895
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 54.0
+      }
+    },
+    "librispeech_other": {
+      "best_wer": {
+        "model": "fw-large-v3",
+        "wer": 0.008445945945945946
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-ctc-0.6b",
+        "rtfx_mean": 51.97517967083635
+      },
+      "smallest_gpu": {
+        "model": "whisper-small.en",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "earnings22": {
+      "best_wer": {
+        "model": "fw-large-v3",
+        "wer": 0.1530398322851153
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-ctc-0.6b",
+        "rtfx_mean": 52.590791814666986
+      },
+      "smallest_gpu": {
+        "model": "whisper-medium.en",
+        "gpu_peak_mem_mb": 0.0
+      }
+    }
+  }
+}
