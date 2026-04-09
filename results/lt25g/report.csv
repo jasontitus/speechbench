@@ -1,0 +1,2 @@
+model_key,model_id,backend,family,dataset_key,sample_cap,num_clips,failed_clips,wer,cer,rtfx_mean,rtfx_p50,rtfx_p10,latency_ms_mean,latency_ms_p50,latency_ms_p90,gpu_peak_mem_mb,model_load_mem_mb,wall_time_s,audio_duration_s_total,gpu_name
+gemma-4-E4B-it,google/gemma-4-E4B-it,transformers,gemma4,common_voice_25_lt,30,30,0,0.6041666666666666,0.236215112321307,0.16408096999565247,0.16945711647618994,0.12447743888446668,33813.7499888738,35073.4646320343,48205.05065917969,5486.0,7940.875,1047.1792659759521,162.576,Tesla T4

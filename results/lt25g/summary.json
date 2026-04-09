@@ -1,0 +1,27 @@
+{
+  "run_id": "lt25g",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 1,
+  "datasets": [
+    "common_voice_25_lt"
+  ],
+  "models": [
+    "gemma-4-E4B-it"
+  ],
+  "best_per_dataset": {
+    "common_voice_25_lt": {
+      "best_wer": {
+        "model": "gemma-4-E4B-it",
+        "wer": 0.6041666666666666
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E4B-it",
+        "rtfx_mean": 0.16408096999565247
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E4B-it",
+        "gpu_peak_mem_mb": 5486.0
+      }
+    }
+  }
+}
