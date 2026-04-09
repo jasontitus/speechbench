@@ -1,0 +1,36 @@
+{
+  "run_id": "lt25",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 10,
+  "datasets": [
+    "common_voice_25_lt"
+  ],
+  "models": [
+    "fw-large-v3",
+    "fw-large-v3-turbo",
+    "parakeet-tdt-0.6b-v3",
+    "whisper-base",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "whisper-medium",
+    "whisper-small",
+    "whisper-tiny"
+  ],
+  "best_per_dataset": {
+    "common_voice_25_lt": {
+      "best_wer": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "wer": 0.29583333333333334
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-0.6b-v3",
+        "rtfx_mean": 40.165599122773074
+      },
+      "smallest_gpu": {
+        "model": "whisper-tiny",
+        "gpu_peak_mem_mb": 98.0
+      }
+    }
+  }
+}

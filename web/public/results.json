@@ -1,103 +1,109 @@
 {
-  "generated_at": "2026-04-09T03:36:48Z",
+  "generated_at": "2026-04-09T04:28:54Z",
   "source_repo": "https://github.com/jasontitus/speechbench",
   "hardware": "GCP spot Tesla T4 (n1-standard-8, 30 GB RAM)",
   "project": "safecare-maps",
   "datasets": {
     "librispeech_clean": {
       "title": "LibriSpeech test-clean",
-      "description": "LibriSpeech test-clean \u2014 clean read speech.",
+      "description": "LibriSpeech test-clean — clean read speech.",
       "url": "https://huggingface.co/datasets/openslr/librispeech_asr",
       "language": "english"
     },
     "librispeech_other": {
       "title": "LibriSpeech test-other",
-      "description": "LibriSpeech test-other \u2014 harder read speech.",
+      "description": "LibriSpeech test-other — harder read speech.",
       "url": "https://huggingface.co/datasets/openslr/librispeech_asr",
       "language": "english"
     },
     "ami_ihm": {
       "title": "AMI IHM test",
-      "description": "AMI IHM test \u2014 meeting/conversation, headset mic.",
+      "description": "AMI IHM test — meeting/conversation, headset mic.",
       "url": "https://huggingface.co/datasets/edinburghcstr/ami",
       "language": "english"
     },
     "earnings22": {
       "title": "Earnings22 test",
-      "description": "Earnings22 \u2014 earnings call recordings (chunked ~20s).",
+      "description": "Earnings22 — earnings call recordings (chunked ~20s).",
       "url": "https://huggingface.co/datasets/distil-whisper/earnings22",
       "language": "english"
     },
     "tedlium_longform": {
       "title": "tedlium_longform",
-      "description": "TED-LIUM long-form \u2014 long-form lectures (11 speakers).",
+      "description": "TED-LIUM long-form — long-form lectures (11 speakers).",
       "url": "https://huggingface.co/datasets/distil-whisper/tedlium-long-form",
       "language": "english"
     },
     "voxpopuli_en": {
       "title": "VoxPopuli en test",
-      "description": "VoxPopuli \u2014 European parliament speeches (English).",
+      "description": "VoxPopuli — European parliament speeches (English).",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
       "language": "english"
     },
     "gigaspeech_l": {
       "title": "gigaspeech_l",
-      "description": "GigaSpeech L \u2014 multi-domain (audiobooks/podcasts/YouTube). Gated.",
+      "description": "GigaSpeech L — multi-domain (audiobooks/podcasts/YouTube). Gated.",
       "url": "https://huggingface.co/datasets/speechcolab/gigaspeech",
       "language": "english"
     },
     "spgispeech": {
       "title": "spgispeech",
-      "description": "SPGISpeech \u2014 financial filings audio. Gated.",
+      "description": "SPGISpeech — financial filings audio. Gated.",
       "url": "https://huggingface.co/datasets/kensho/spgispeech",
       "language": "english"
     },
     "common_voice_22_en": {
-      "title": "Common Voice 22 \u2014 English",
-      "description": "Common Voice 22 \u2014 English. Crowd-sourced read speech (diverse speakers/accents). fsicoli mirror on HF.",
+      "title": "Common Voice 22 — English",
+      "description": "Common Voice 22 — English. Crowd-sourced read speech (diverse speakers/accents). fsicoli mirror on HF.",
       "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
       "language": "english"
     },
     "mls_es": {
       "title": "MLS Spanish",
-      "description": "Multilingual LibriSpeech \u2014 Spanish test set (audiobooks).",
+      "description": "Multilingual LibriSpeech — Spanish test set (audiobooks).",
       "url": "https://huggingface.co/datasets/facebook/multilingual_librispeech",
       "language": "spanish"
     },
     "voxpopuli_es": {
       "title": "VoxPopuli es test",
-      "description": "VoxPopuli \u2014 European parliament speeches in Spanish.",
+      "description": "VoxPopuli — European parliament speeches in Spanish.",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
       "language": "spanish"
     },
     "fleurs_es": {
       "title": "FLEURS Spanish (es_419)",
-      "description": "FLEURS Spanish (es_419) \u2014 102-language multilingual ASR benchmark.",
+      "description": "FLEURS Spanish (es_419) — 102-language multilingual ASR benchmark.",
       "url": "https://huggingface.co/datasets/google/fleurs",
       "language": "spanish"
     },
     "common_voice_22_es": {
-      "title": "Common Voice 22 \u2014 Spanish",
-      "description": "Common Voice 22 \u2014 Spanish. Crowd-sourced read speech. fsicoli mirror (Mozilla moved official CV off HF in Oct 2025).",
+      "title": "Common Voice 22 — Spanish",
+      "description": "Common Voice 22 — Spanish. Crowd-sourced read speech. fsicoli mirror (Mozilla moved official CV off HF in Oct 2025).",
       "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
       "language": "spanish"
     },
     "voxpopuli_lt": {
       "title": "VoxPopuli lt test",
-      "description": "VoxPopuli \u2014 European parliament speeches in Lithuanian.",
+      "description": "VoxPopuli — European parliament speeches in Lithuanian.",
       "url": "https://huggingface.co/datasets/facebook/voxpopuli",
       "language": "lithuanian"
     },
     "fleurs_lt": {
       "title": "FLEURS Lithuanian (lt_lt)",
-      "description": "FLEURS Lithuanian (lt_lt) \u2014 102-language multilingual ASR benchmark.",
+      "description": "FLEURS Lithuanian (lt_lt) — 102-language multilingual ASR benchmark.",
       "url": "https://huggingface.co/datasets/google/fleurs",
       "language": "lithuanian"
     },
     "common_voice_22_lt": {
-      "title": "Common Voice 22 \u2014 Lithuanian",
-      "description": "Common Voice 22 \u2014 Lithuanian. Crowd-sourced read speech.",
+      "title": "Common Voice 22 — Lithuanian",
+      "description": "Common Voice 22 — Lithuanian. Crowd-sourced read speech.",
       "url": "https://huggingface.co/datasets/fsicoli/common_voice_22_0",
+      "language": "lithuanian"
+    },
+    "common_voice_25_lt": {
+      "title": "Common Voice 25 — Lithuanian",
+      "description": "Common Voice 25 — Lithuanian (2026-03-09). Crowd-sourced read speech, newest Mozilla release.",
+      "url": "https://commonvoice.mozilla.org/en/datasets",
       "language": "lithuanian"
     }
   },
@@ -2339,7 +2345,7 @@
       ]
     },
     "es": {
-      "label": "Espa\u00f1ol",
+      "label": "Español",
       "sample_cap": 30,
       "results": {
         "mls_es": [
@@ -3175,7 +3181,7 @@
       ]
     },
     "lt": {
-      "label": "Lietuvi\u0173",
+      "label": "Lietuvių",
       "sample_cap": 30,
       "results": {
         "fleurs_lt": [
@@ -3795,12 +3801,185 @@
             "model_id": "google/gemma-4-E4B-it",
             "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           }
+        ],
+        "common_voice_25_lt": [
+          {
+            "model_key": "parakeet-tdt-0.6b-v3",
+            "backend": "nemo",
+            "family": "parakeet",
+            "n": 30,
+            "wer": 0.29583333333333334,
+            "cer": 0.1592920353982301,
+            "rtfx_mean": 40.165599122773074,
+            "rtfx_p50": 40.96438881949493,
+            "rtfx_p10": 28.30831555701513,
+            "latency_ms_mean": 209.08637046813965,
+            "latency_ms_p90": 146.4690923690796,
+            "gpu_peak_mem_mb": 136.0,
+            "wall_time_s": 6.461180210113525,
+            "model_id": "nvidia/parakeet-tdt-0.6b-v3",
+            "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
+          },
+          {
+            "model_key": "whisper-large-v3",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.36666666666666664,
+            "cer": 0.10415248468345814,
+            "rtfx_mean": 3.224222930517882,
+            "rtfx_p50": 3.1880216970028785,
+            "rtfx_p10": 2.413680600056182,
+            "latency_ms_mean": 1702.1576563517253,
+            "latency_ms_p90": 2406.6139221191406,
+            "gpu_peak_mem_mb": 1426.0,
+            "wall_time_s": 51.243687868118286,
+            "model_id": "openai/whisper-large-v3",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3"
+          },
+          {
+            "model_key": "fw-large-v3",
+            "backend": "faster-whisper",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.39166666666666666,
+            "cer": 0.11436351259360109,
+            "rtfx_mean": 6.751112460297078,
+            "rtfx_p50": 6.602113897516739,
+            "rtfx_p10": 5.354889438670504,
+            "latency_ms_mean": 797.150961558024,
+            "latency_ms_p90": 1034.7161531448364,
+            "gpu_peak_mem_mb": 298.0,
+            "wall_time_s": 24.101460456848145,
+            "model_id": "large-v3",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "fw-large-v3-turbo",
+            "backend": "faster-whisper",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.4375,
+            "cer": 0.13818924438393465,
+            "rtfx_mean": 12.237954808258511,
+            "rtfx_p50": 12.504240016295054,
+            "rtfx_p10": 8.679544762966575,
+            "latency_ms_mean": 465.4476324717204,
+            "latency_ms_p90": 477.08277702331543,
+            "gpu_peak_mem_mb": 328.0,
+            "wall_time_s": 14.149999618530273,
+            "model_id": "large-v3-turbo",
+            "model_url": "https://github.com/SYSTRAN/faster-whisper"
+          },
+          {
+            "model_key": "whisper-large-v2",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.44583333333333336,
+            "cer": 0.15180394826412524,
+            "rtfx_mean": 3.3383431701080184,
+            "rtfx_p50": 3.3923577785932872,
+            "rtfx_p10": 2.3084301849794318,
+            "latency_ms_mean": 1697.5541512171428,
+            "latency_ms_p90": 2485.537624359131,
+            "gpu_peak_mem_mb": 1500.0,
+            "wall_time_s": 86.77927231788635,
+            "model_id": "openai/whisper-large-v2",
+            "model_url": "https://huggingface.co/openai/whisper-large-v2"
+          },
+          {
+            "model_key": "whisper-medium",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.5833333333333334,
+            "cer": 0.1688223281143635,
+            "rtfx_mean": 4.687660053147105,
+            "rtfx_p50": 4.627387011818541,
+            "rtfx_p10": 3.3762278218412165,
+            "latency_ms_mean": 1174.8514493306477,
+            "latency_ms_p90": 1715.5990839004517,
+            "gpu_peak_mem_mb": 864.0,
+            "wall_time_s": 35.43151235580444,
+            "model_id": "openai/whisper-medium",
+            "model_url": "https://huggingface.co/openai/whisper-medium"
+          },
+          {
+            "model_key": "whisper-large-v3-turbo",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.6,
+            "cer": 0.28182437031994556,
+            "rtfx_mean": 12.12241560802197,
+            "rtfx_p50": 12.473929313526284,
+            "rtfx_p10": 8.861028695897716,
+            "latency_ms_mean": 580.9491952260336,
+            "latency_ms_p90": 583.8744163513184,
+            "gpu_peak_mem_mb": 310.0,
+            "wall_time_s": 17.612294912338257,
+            "model_id": "openai/whisper-large-v3-turbo",
+            "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
+          },
+          {
+            "model_key": "whisper-small",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.7166666666666667,
+            "cer": 0.2021783526208305,
+            "rtfx_mean": 9.787122612789368,
+            "rtfx_p50": 9.81723709108148,
+            "rtfx_p10": 7.312178416824362,
+            "latency_ms_mean": 561.4479064941406,
+            "latency_ms_p90": 790.7224416732788,
+            "gpu_peak_mem_mb": 338.0,
+            "wall_time_s": 17.031290769577026,
+            "model_id": "openai/whisper-small",
+            "model_url": "https://huggingface.co/openai/whisper-small"
+          },
+          {
+            "model_key": "whisper-base",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 0.9458333333333333,
+            "cer": 0.32947583390061264,
+            "rtfx_mean": 18.319692313883525,
+            "rtfx_p50": 18.11691625208722,
+            "rtfx_p10": 12.994508612143647,
+            "latency_ms_mean": 304.3835401535034,
+            "latency_ms_p90": 448.5001802444458,
+            "gpu_peak_mem_mb": 172.0,
+            "wall_time_s": 9.318883895874023,
+            "model_id": "openai/whisper-base",
+            "model_url": "https://huggingface.co/openai/whisper-base"
+          },
+          {
+            "model_key": "whisper-tiny",
+            "backend": "transformers",
+            "family": "whisper",
+            "n": 30,
+            "wer": 2.6041666666666665,
+            "cer": 1.665078284547311,
+            "rtfx_mean": 22.596572578536883,
+            "rtfx_p50": 22.074663174170972,
+            "rtfx_p10": 15.9889017071882,
+            "latency_ms_mean": 464.77006276448566,
+            "latency_ms_p90": 410.45541763305664,
+            "gpu_peak_mem_mb": 98.0,
+            "wall_time_s": 14.127917528152466,
+            "model_id": "openai/whisper-tiny",
+            "model_url": "https://huggingface.co/openai/whisper-tiny"
+          }
         ]
       },
       "dataset_order": [
         "fleurs_lt",
         "voxpopuli_lt",
-        "common_voice_22_lt"
+        "common_voice_22_lt",
+        "common_voice_25_lt"
       ]
     }
   }
