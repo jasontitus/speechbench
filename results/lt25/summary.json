@@ -21,7 +21,7 @@
     "common_voice_25_lt": {
       "best_wer": {
         "model": "parakeet-tdt-0.6b-v3",
-        "wer": 0.29583333333333334
+        "wer": 0.35609756097560974
       },
       "fastest_rtfx": {
         "model": "parakeet-tdt-0.6b-v3",

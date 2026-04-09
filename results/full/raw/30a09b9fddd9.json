@@ -11,7 +11,7 @@
   "audio_duration_s_total": 168.46162499999994,
   "wall_time_s": 37.30071759223938,
   "model_load_seconds": 262.48000979423523,
-  "wer": 0.1928721174004193,
+  "wer": 0.19077568134171907,
   "cer": 0.12339137017411052,
   "rtfx_mean": 6.203703080207433,
   "rtfx_p50": 6.555201582851303,
@@ -383,10 +383,10 @@
       "audio_seconds": 5.7400625,
       "reference_raw": "Uh, moving on to cash generation, clearly a continuous highlight of TeamViewer.",
       "reference_norm": "uh moving on to cash generation clearly a continuous highlight of teamviewer",
-      "hypothesis_raw": "Moving on to cash generation, clearly a continuous highlight of Team Bj\u00f6rn.",
-      "hypothesis_norm": "moving on to cash generation clearly a continuous highlight of team bj rn",
+      "hypothesis_raw": "Moving on to cash generation, clearly a continuous highlight of Team Björn.",
+      "hypothesis_norm": "moving on to cash generation clearly a continuous highlight of team björn",
       "latency_ms": 825.514554977417,
-      "wer": 0.3333333333333333,
+      "wer": 0.25,
       "cer": 0.11842105263157894,
       "failed": false,
       "error": ""
@@ -417,5 +417,6 @@
       "failed": false,
       "error": ""
     }
-  ]
+  ],
+  "language": "english"
 }

@@ -11,8 +11,8 @@
   "audio_duration_s_total": 40.759937500000014,
   "wall_time_s": 31.96014094352722,
   "model_load_seconds": 62.53663897514343,
-  "wer": 1.168,
-  "cer": 1.263537906137184,
+  "wer": 1.152,
+  "cer": 1.2689530685920578,
   "rtfx_mean": 1.6822256966933247,
   "rtfx_p50": 1.6089259152382047,
   "rtfx_p10": 0.10772256701299604,
@@ -32,11 +32,11 @@
       "audio_seconds": 1.37,
       "reference_raw": "YEAH",
       "reference_norm": "yeah",
-      "hypothesis_raw": "M\u00ecnh ch\u01a1i \u0111\u00e1 b\u00f3ng nha.",
-      "hypothesis_norm": "m nh ch i b ng nha",
+      "hypothesis_raw": "Mình chơi đá bóng nha.",
+      "hypothesis_norm": "mình chơi đá bóng nha",
       "latency_ms": 879.957914352417,
-      "wer": 7.0,
-      "cer": 4.25,
+      "wer": 5.0,
+      "cer": 5.0,
       "failed": false,
       "error": ""
     },
@@ -417,5 +417,6 @@
       "failed": false,
       "error": ""
     }
-  ]
+  ],
+  "language": "english"
 }

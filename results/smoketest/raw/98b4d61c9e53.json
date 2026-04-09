@@ -11,8 +11,8 @@
   "audio_duration_s_total": 0.0,
   "wall_time_s": 21.567782640457153,
   "model_load_seconds": 308.0970287322998,
-  "wer": 0.0,
-  "cer": 0.0,
+  "wer": 1.0,
+  "cer": 1.0,
   "rtfx_mean": 0.0,
   "rtfx_p50": 0.0,
   "rtfx_p10": 0.0,
@@ -40,5 +40,6 @@
       "failed": true,
       "error": "Cannot use chat template functions because tokenizer.chat_template is not set and no template argument was passed! For information about writing templates and setting the tokenizer.chat_template attribute, please see the documentation at https://huggingface.co/docs/transformers/main/en/chat_templating"
     }
-  ]
+  ],
+  "language": "english"
 }

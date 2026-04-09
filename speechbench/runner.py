@@ -179,11 +179,11 @@ def run_job(
                 hyp_raw = model.transcribe(audio, sample_rate=16000, language=lang)
             t1 = time.time()
             latency_ms = (t1 - t0) * 1000.0
-            ref_norm = normalize_text(ref_raw)
-            hyp_norm = normalize_text(hyp_raw)
+            ref_norm = normalize_text(ref_raw, language=lang)
+            hyp_norm = normalize_text(hyp_raw, language=lang)
 
-            wer = per_clip_wer(ref_raw, hyp_raw)
-            cer = per_clip_cer(ref_raw, hyp_raw)
+            wer = per_clip_wer(ref_raw, hyp_raw, language=lang)
+            cer = per_clip_cer(ref_raw, hyp_raw, language=lang)
             rtfx = (audio_seconds / max(1e-6, (t1 - t0))) if audio_seconds > 0 else 0.0
 
             refs.append(ref_raw)
@@ -220,7 +220,7 @@ def run_job(
                     clip_id=clip_id,
                     audio_seconds=audio_seconds,
                     reference_raw=ref_raw,
-                    reference_norm=normalize_text(ref_raw),
+                    reference_norm=normalize_text(ref_raw, language=lang),
                     hypothesis_raw="",
                     hypothesis_norm="",
                     latency_ms=0.0,
@@ -238,8 +238,8 @@ def run_job(
     result.finished_at = time.time()
 
     if refs:
-        result.wer = compute_wer(refs, hyps)
-        result.cer = compute_cer(refs, hyps)
+        result.wer = compute_wer(refs, hyps, language=lang)
+        result.cer = compute_cer(refs, hyps, language=lang)
     if latencies:
         result.latency_ms_mean = mean(latencies)
         result.latency_ms_p50 = percentile(latencies, 50)

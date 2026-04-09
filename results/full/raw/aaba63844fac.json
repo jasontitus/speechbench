@@ -136,7 +136,7 @@
       "audio_seconds": 14.73,
       "reference_raw": "HE LAUGHED BUT IT WAS A CURIOUS KIND OF LAUGH FULL OF VEXATION INJURED AMOUR PROPRE AS THE FRENCH CALL OUR LOVE OF OUR OWN DIGNITY OF WHICH ARCHIBALD RAYSTOKE IN THE FULL FLUSH OF HIS YOUNG BELIEF IN HIS IMPORTANCE AS A BRITISH OFFICER HAD A PRETTY GOOD STOCK",
       "reference_norm": "he laughed but it was a curious kind of laugh full of vexation injured amour propre as the french call our love of our own dignity of which archibald raystoke in the full flush of his young belief in his importance as a british officer had a pretty good stock",
-      "hypothesis_raw": "He laughed, but it was a curious kind of laugh, full of vexation\u2014\"injured amour proper,\" as the French call our love of our own dignity, of which Archibald Raystroke, in the full flush of his young belief in his importance as a British officer, had a pretty good stock.",
+      "hypothesis_raw": "He laughed, but it was a curious kind of laugh, full of vexation—\"injured amour proper,\" as the French call our love of our own dignity, of which Archibald Raystroke, in the full flush of his young belief in his importance as a British officer, had a pretty good stock.",
       "hypothesis_norm": "he laughed but it was a curious kind of laugh full of vexation injured amour proper as the french call our love of our own dignity of which archibald raystroke in the full flush of his young belief in his importance as a british officer had a pretty good stock",
       "latency_ms": 2552.997589111328,
       "wer": 0.04,
@@ -417,5 +417,6 @@
       "failed": false,
       "error": ""
     }
-  ]
+  ],
+  "language": "english"
 }

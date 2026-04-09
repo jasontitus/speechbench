@@ -11,8 +11,8 @@
   "audio_duration_s_total": 0.0,
   "wall_time_s": 1.7307910919189453,
   "model_load_seconds": 69.47538614273071,
-  "wer": 0.0,
-  "cer": 0.0,
+  "wer": 1.0,
+  "cer": 1.0,
   "rtfx_mean": 0.0,
   "rtfx_p50": 0.0,
   "rtfx_p10": 0.0,
@@ -40,5 +40,6 @@
       "failed": true,
       "error": "`np.sctypes` was removed in the NumPy 2.0 release. Access dtypes explicitly instead."
     }
-  ]
+  ],
+  "language": "english"
 }

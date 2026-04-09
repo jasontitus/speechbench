@@ -11,8 +11,8 @@
   "audio_duration_s_total": 0.0,
   "wall_time_s": 1.0585010051727295,
   "model_load_seconds": 3.9284236431121826,
-  "wer": 0.0,
-  "cer": 0.0,
+  "wer": 1.0,
+  "cer": 1.0,
   "rtfx_mean": 0.0,
   "rtfx_p50": 0.0,
   "rtfx_p10": 0.0,
@@ -157,5 +157,6 @@
       "failed": true,
       "error": "Cannot specify `task` or `language` for an English-only model. If the model is intended to be multilingual, pass `is_multilingual=True` to generate, or update the generation config."
     }
-  ]
+  ],
+  "language": "english"
 }

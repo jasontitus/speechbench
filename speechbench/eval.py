@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 import threading
 import time
+import unicodedata
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import Optional
@@ -11,14 +12,23 @@ from typing import Optional
 
 # ─── Text normalization ────────────────────────────────────────────────────────
 #
-# This is a Whisper-style English normalizer. We deliberately keep it light and
-# self-contained so it can run with no extra dependencies. The full Whisper
-# normalizer (`openai-whisper`'s `EnglishTextNormalizer`) is more aggressive and
-# we may swap to it later, but the rules below cover the cases that actually
-# move WER for the models in the suite (case, punctuation, common contractions,
-# whitespace).
+# Two normalizers live here:
+#
+#   • English: lowercase → expand contractions → strip punctuation → digit-to-
+#     word for single digits → collapse whitespace. Roughly Whisper-style.
+#
+#   • Non-English: lowercase → strip everything that isn't a Unicode letter,
+#     digit, apostrophe, or whitespace → collapse whitespace. We deliberately
+#     keep all Unicode letters (Lithuanian ė, Spanish ñ, German ü, Cyrillic,
+#     CJK, …) so morphologically rich languages don't lose word boundaries.
+#
+# Earlier versions of this file used a single ASCII-only regex
+# (`[^a-z0-9'\s]`) for both, which silently corrupted every non-English
+# transcript: every non-ASCII letter became a space, splitting words and
+# inflating WER by ~2× on Lithuanian and ~1.3× on Spanish. The recompute path
+# in this module re-derives historical WER/CER from per-clip raw fields, so
+# old result JSONs can be fixed in place without touching a GPU.
 
-_PUNCT_RE = re.compile(r"[^a-z0-9'\s]")
 _MULTI_WS_RE = re.compile(r"\s+")
 
 _CONTRACTIONS = {
@@ -40,24 +50,49 @@ _NUMBER_WORDS = {
 }
 
 
-def normalize_text(text: str) -> str:
+def _strip_punct_unicode(s: str) -> str:
+    """Replace any character that isn't a Unicode letter/number, apostrophe,
+    or whitespace with a space. Unicode-safe substitute for `[^a-z0-9'\\s]`."""
+    out: list[str] = []
+    for ch in s:
+        if ch in (" ", "'", "\t", "\n"):
+            out.append(ch)
+            continue
+        # Unicode general categories: L* = letter, N* = number/digit.
+        cat = unicodedata.category(ch)
+        if cat and cat[0] in ("L", "N"):
+            out.append(ch)
+        else:
+            out.append(" ")
+    return "".join(out)
+
+
+def normalize_text(text: str, language: str = "english") -> str:
     """Normalize a string for fair WER comparison across ASR models.
 
-    Lowercase → expand common English contractions → strip punctuation
-    (except apostrophes already handled) → digit-to-word for single digits
-    → collapse whitespace.
+    For English, the historical rules apply: lowercase, expand contractions,
+    strip punctuation, single-digit→word, collapse whitespace.
+
+    For every other language, we still lowercase + strip punctuation +
+    collapse whitespace, but the punctuation strip uses Unicode categories
+    instead of ASCII so non-Latin letters survive intact. We deliberately
+    skip both the English contraction expansion (it would corrupt
+    apostrophe-bearing tokens in other languages) and the digit-to-word
+    substitution (only meaningful in English).
     """
     if text is None:
         return ""
     s = text.lower()
-    for k, v in _CONTRACTIONS.items():
-        s = s.replace(k, v)
-    s = _PUNCT_RE.sub(" ", s)
-    # Spell out single isolated digits — multi-digit numbers stay as numerals
-    # for now; this is a deliberate trade-off (the models are inconsistent and
-    # converting both to digits or both to words is a wash on the leaderboard
-    # datasets).
-    s = " ".join(_NUMBER_WORDS.get(tok, tok) for tok in s.split())
+    if language == "english":
+        for k, v in _CONTRACTIONS.items():
+            s = s.replace(k, v)
+        s = _strip_punct_unicode(s)
+        # Spell out single isolated digits — multi-digit numbers stay as
+        # numerals (the models are inconsistent and either choice is a wash
+        # on the English leaderboard datasets).
+        s = " ".join(_NUMBER_WORDS.get(tok, tok) for tok in s.split())
+    else:
+        s = _strip_punct_unicode(s)
     s = _MULTI_WS_RE.sub(" ", s).strip()
     return s
 
@@ -65,32 +100,40 @@ def normalize_text(text: str) -> str:
 # ─── WER / CER ─────────────────────────────────────────────────────────────────
 
 
-def compute_wer(references: list[str], hypotheses: list[str]) -> float:
+def compute_wer(
+    references: list[str],
+    hypotheses: list[str],
+    language: str = "english",
+) -> float:
     import jiwer  # type: ignore
 
-    refs = [normalize_text(r) for r in references]
-    hyps = [normalize_text(h) for h in hypotheses]
+    refs = [normalize_text(r, language=language) for r in references]
+    hyps = [normalize_text(h, language=language) for h in hypotheses]
     refs = [r if r else " " for r in refs]
     hyps = [h if h else " " for h in hyps]
     return float(jiwer.wer(refs, hyps))
 
 
-def compute_cer(references: list[str], hypotheses: list[str]) -> float:
+def compute_cer(
+    references: list[str],
+    hypotheses: list[str],
+    language: str = "english",
+) -> float:
     import jiwer  # type: ignore
 
-    refs = [normalize_text(r) for r in references]
-    hyps = [normalize_text(h) for h in hypotheses]
+    refs = [normalize_text(r, language=language) for r in references]
+    hyps = [normalize_text(h, language=language) for h in hypotheses]
     refs = [r if r else " " for r in refs]
     hyps = [h if h else " " for h in hyps]
     return float(jiwer.cer(refs, hyps))
 
 
-def per_clip_wer(reference: str, hypothesis: str) -> float:
-    return compute_wer([reference], [hypothesis])
+def per_clip_wer(reference: str, hypothesis: str, language: str = "english") -> float:
+    return compute_wer([reference], [hypothesis], language=language)
 
 
-def per_clip_cer(reference: str, hypothesis: str) -> float:
-    return compute_cer([reference], [hypothesis])
+def per_clip_cer(reference: str, hypothesis: str, language: str = "english") -> float:
+    return compute_cer([reference], [hypothesis], language=language)
 
 
 # ─── Latency / RTFx helpers ────────────────────────────────────────────────────

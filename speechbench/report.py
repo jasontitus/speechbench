@@ -6,7 +6,12 @@ emits:
   results/<run_id>/report.csv    flat CSV
   results/<run_id>/summary.json  machine-readable summary
 
-The Markdown report has one table per dataset, sorted by WER ascending.
+The Markdown report has one table per dataset, sorted by the language's
+primary metric (WER for English, CER for non-English).
+
+Aggregate WER/CER are *recomputed from per-clip raw fields* after every
+fetch so the report always reflects the current normalizer, even if the
+raw JSON in GCS was written by an older version of the suite.
 """
 from __future__ import annotations
 
@@ -20,6 +25,46 @@ from typing import Optional
 
 from . import gcp
 from .config import DEFAULT_BUCKET
+from .datasets import DATASETS
+from .eval import compute_cer, compute_wer, normalize_text, per_clip_cer, per_clip_wer
+
+
+def _language_for_dataset(dataset_key: str) -> str:
+    spec = DATASETS.get(dataset_key)
+    if spec is None:
+        return "english"
+    return getattr(spec, "language", "english") or "english"
+
+
+def _recompute_in_place(j: dict) -> None:
+    """Re-derive aggregate WER/CER from per-clip raw fields using the current
+    normalizer. Mutates `j` in place. No-op if there are no clips."""
+    clips = j.get("clips") or []
+    if not clips:
+        return
+    lang = _language_for_dataset(j.get("dataset_key", ""))
+    refs: list[str] = []
+    hyps: list[str] = []
+    for c in clips:
+        ref = c.get("reference_raw", "") or ""
+        if c.get("failed"):
+            refs.append(ref)
+            hyps.append("")
+            c["wer"] = 1.0
+            c["cer"] = 1.0
+            c["reference_norm"] = normalize_text(ref, language=lang)
+            c["hypothesis_norm"] = ""
+            continue
+        hyp = c.get("hypothesis_raw", "") or ""
+        refs.append(ref)
+        hyps.append(hyp)
+        c["reference_norm"] = normalize_text(ref, language=lang)
+        c["hypothesis_norm"] = normalize_text(hyp, language=lang)
+        c["wer"] = per_clip_wer(ref, hyp, language=lang)
+        c["cer"] = per_clip_cer(ref, hyp, language=lang)
+    j["wer"] = compute_wer(refs, hyps, language=lang)
+    j["cer"] = compute_cer(refs, hyps, language=lang)
+    j["language"] = lang
 
 
 def fetch_results(bucket: str, run_id: str, local_dir: Path) -> list[dict]:
@@ -27,6 +72,10 @@ def fetch_results(bucket: str, run_id: str, local_dir: Path) -> list[dict]:
 
     `bucket` may be either a GCS bucket name (or `gs://...` URI) OR a local
     filesystem path. The local-path branch is used by `speechbench run --local`.
+
+    Every result file is recomputed in place against the current normalizer
+    (so a normalizer fix automatically reflects in subsequent reports without
+    needing to re-run inference).
     """
     bucket_str = str(bucket)
 
@@ -49,9 +98,17 @@ def fetch_results(bucket: str, run_id: str, local_dir: Path) -> list[dict]:
                         continue
                     try:
                         with open(f) as fh:
-                            out.append(json.load(fh))
+                            j = json.load(fh)
                     except Exception as e:
                         print(f"  ! failed to read {f}: {e}")
+                        continue
+                    _recompute_in_place(j)
+                    # Persist the recomputed values so downstream tools see them.
+                    try:
+                        f.write_text(json.dumps(j, indent=2, ensure_ascii=False))
+                    except Exception:
+                        pass
+                    out.append(j)
                 return out
         return []
 
@@ -71,10 +128,31 @@ def fetch_results(bucket: str, run_id: str, local_dir: Path) -> list[dict]:
         try:
             gcp.gs_download(uri, str(local_path))
             with open(local_path) as f:
-                out.append(json.load(f))
+                j = json.load(f)
         except Exception as e:
             print(f"  ! failed to fetch {uri}: {e}")
+            continue
+        _recompute_in_place(j)
+        try:
+            local_path.write_text(json.dumps(j, indent=2, ensure_ascii=False))
+        except Exception:
+            pass
+        out.append(j)
     return out
+
+
+def _is_english_dataset(results_for_ds: list[dict]) -> bool:
+    """Look at any clip in the dataset's results to figure out the language.
+
+    Result JSONs written by `runner.py` after the normalizer fix store a
+    `language` field at the top level. Older files default to English (the
+    safe historical assumption).
+    """
+    for r in results_for_ds:
+        lang = r.get("language") or ""
+        if lang:
+            return lang == "english"
+    return True
 
 
 def render_markdown(results: list[dict], run_id: str) -> str:
@@ -96,26 +174,44 @@ def render_markdown(results: list[dict], run_id: str) -> str:
         return "\n".join(lines)
 
     for ds in sorted(by_dataset):
-        rows = sorted(by_dataset[ds], key=lambda r: r.get("wer", 1.0))
+        # For non-English datasets, sort by CER and put CER before WER —
+        # CER is the more informative metric for morphologically rich
+        # languages where the model is usually nearly right but loses on
+        # word-boundary inflection matches.
+        english = _is_english_dataset(by_dataset[ds])
+        primary_key = "wer" if english else "cer"
+        rows = sorted(by_dataset[ds], key=lambda r: r.get(primary_key, 1.0))
         lines.append(f"## {ds}")
         lines.append("")
-        lines.append("| Model | Backend | n | WER | CER | RTFx (mean) | RTFx (p50) | Latency mean (ms) | GPU peak (MB) | Wall (s) |")
+        if english:
+            lines.append("| Model | Backend | n | WER | CER | RTFx (mean) | RTFx (p50) | Latency mean (ms) | GPU peak (MB) | Wall (s) |")
+        else:
+            lines.append("| Model | Backend | n | CER | WER | RTFx (mean) | RTFx (p50) | Latency mean (ms) | GPU peak (MB) | Wall (s) |")
         lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|---:|")
         for r in rows:
-            lines.append(
-                "| {model} | {backend} | {n} | {wer} | {cer} | {rtfx} | {rtfxp50} | {lat} | {gpu} | {wall} |".format(
-                    model=r.get("model_key", "?"),
-                    backend=r.get("backend", "?"),
-                    n=r.get("num_clips", 0),
-                    wer=f"{r.get('wer', 0):.3f}",
-                    cer=f"{r.get('cer', 0):.3f}",
-                    rtfx=f"{r.get('rtfx_mean', 0):.1f}",
-                    rtfxp50=f"{r.get('rtfx_p50', 0):.1f}",
-                    lat=f"{r.get('latency_ms_mean', 0):.0f}",
-                    gpu=f"{r.get('gpu_peak_mem_mb', 0):.0f}",
-                    wall=f"{r.get('wall_time_s', 0):.0f}",
+            cells = {
+                "model": r.get("model_key", "?"),
+                "backend": r.get("backend", "?"),
+                "n": r.get("num_clips", 0),
+                "wer": f"{r.get('wer', 0):.3f}",
+                "cer": f"{r.get('cer', 0):.3f}",
+                "rtfx": f"{r.get('rtfx_mean', 0):.1f}",
+                "rtfxp50": f"{r.get('rtfx_p50', 0):.1f}",
+                "lat": f"{r.get('latency_ms_mean', 0):.0f}",
+                "gpu": f"{r.get('gpu_peak_mem_mb', 0):.0f}",
+                "wall": f"{r.get('wall_time_s', 0):.0f}",
+            }
+            if english:
+                fmt = (
+                    "| {model} | {backend} | {n} | {wer} | {cer} | {rtfx} | {rtfxp50} | "
+                    "{lat} | {gpu} | {wall} |"
                 )
-            )
+            else:
+                fmt = (
+                    "| {model} | {backend} | {n} | {cer} | {wer} | {rtfx} | {rtfxp50} | "
+                    "{lat} | {gpu} | {wall} |"
+                )
+            lines.append(fmt.format(**cells))
         lines.append("")
     return "\n".join(lines)
 
@@ -226,27 +322,35 @@ def render_console_table(results: list[dict]) -> str:
             continue
         by_ds.setdefault(ds, []).append(r)
     for ds in sorted(by_ds):
-        rows = sorted(by_ds[ds], key=lambda r: r.get("wer", 1.0))
-        table = [
-            [
+        english = _is_english_dataset(by_ds[ds])
+        primary_key = "wer" if english else "cer"
+        rows = sorted(by_ds[ds], key=lambda r: r.get(primary_key, 1.0))
+        if english:
+            headers = ["model", "backend", "n", "WER", "CER", "RTFx", "lat ms", "GPU MB"]
+        else:
+            # Non-English: CER first, since one wrong inflection letter is
+            # 1 word error but only 1 char error.
+            headers = ["model", "backend", "n", "CER", "WER", "RTFx", "lat ms", "GPU MB"]
+        table = []
+        for r in rows:
+            wer_str = f"{r.get('wer', 0)*100:.2f}%"
+            cer_str = f"{r.get('cer', 0)*100:.2f}%"
+            row = [
                 r.get("model_key"),
                 r.get("backend"),
                 r.get("num_clips"),
-                f"{r.get('wer', 0)*100:.2f}%",
-                f"{r.get('cer', 0)*100:.2f}%",
+            ]
+            if english:
+                row += [wer_str, cer_str]
+            else:
+                row += [cer_str, wer_str]
+            row += [
                 f"{r.get('rtfx_mean', 0):.1f}",
                 f"{r.get('latency_ms_mean', 0):.0f}",
                 f"{r.get('gpu_peak_mem_mb', 0):.0f}",
             ]
-            for r in rows
-        ]
+            table.append(row)
         out.append("")
         out.append(f"=== {ds} ===")
-        out.append(
-            tabulate(
-                table,
-                headers=["model", "backend", "n", "WER", "CER", "RTFx", "lat ms", "GPU MB"],
-                tablefmt="simple",
-            )
-        )
+        out.append(tabulate(table, headers=headers, tablefmt="simple"))
     return "\n".join(out)

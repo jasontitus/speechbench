@@ -58,7 +58,7 @@
       "audio_seconds": 5.02,
       "reference_raw": "AND AND YOU HAVE NOT FOUND OUT ANYTHING CAME IN QUICK FRIGHTENED TONES",
       "reference_norm": "and and you have not found out anything came in quick frightened tones",
-      "hypothesis_raw": "\"'And\u2014and you have not found out anything?' came in quick, frightened tones.",
+      "hypothesis_raw": "\"'And—and you have not found out anything?' came in quick, frightened tones.",
       "hypothesis_norm": "'and and you have not found out anything ' came in quick frightened tones",
       "latency_ms": 1311.8329048156738,
       "wer": 0.15384615384615385,
@@ -417,5 +417,6 @@
       "failed": false,
       "error": ""
     }
-  ]
+  ],
+  "language": "english"
 }
