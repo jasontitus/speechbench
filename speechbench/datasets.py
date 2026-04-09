@@ -64,6 +64,105 @@ class DatasetSpec:
         return f"{self.key}@{sample_cap}"
 
 
+def _gcs_common_voice_tar_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSample]:
+    """Load a Mozilla Common Voice tarball stored in GCS.
+
+    The tarball is expected to have the standard Mozilla layout:
+        cv-corpus-<version>-<date>/<lang>/
+            test.tsv
+            clips/<clip_name>.mp3
+
+    The GCS path is passed via spec.hf_dataset (e.g.
+    'gs://bucket/corpora/cv25-lt/test.tar.gz'). The loader downloads the
+    tarball once per VM to /tmp (cached across jobs on the same VM),
+    extracts the test.tsv + clip mp3s, and yields decoded samples.
+
+    This is what we use for Common Voice versions newer than what fsicoli
+    mirrors on HuggingFace (25+), which are only available via Mozilla
+    Data Collective as tarball downloads.
+    """
+    import csv as _csv
+    import os as _os
+    import subprocess
+    import tarfile
+    import tempfile
+
+    import librosa  # type: ignore
+
+    np = _lazy_np()
+
+    gcs_uri = spec.hf_dataset
+    if not gcs_uri.startswith("gs://"):
+        raise ValueError(
+            f"_gcs_common_voice_tar_loader expects gs:// URI in hf_dataset, got {gcs_uri}"
+        )
+
+    # Cache the tarball in /tmp so multiple jobs on the same VM reuse the same
+    # extraction. Key the cache by the GCS path so different tarballs don't
+    # collide.
+    cache_dir = _os.path.join("/tmp", "speechbench_cv_cache", spec.key)
+    extract_dir = _os.path.join(cache_dir, "extracted")
+    marker_path = _os.path.join(cache_dir, ".ready")
+    _os.makedirs(cache_dir, exist_ok=True)
+
+    if not _os.path.exists(marker_path):
+        # Download the tarball
+        local_tar = _os.path.join(cache_dir, "corpus.tar.gz")
+        print(f"  ▸ downloading {gcs_uri} -> {local_tar}", flush=True)
+        subprocess.run(
+            ["gsutil", "-q", "cp", gcs_uri, local_tar],
+            check=True,
+        )
+        print(f"  ▸ extracting", flush=True)
+        _os.makedirs(extract_dir, exist_ok=True)
+        with tarfile.open(local_tar, mode="r:gz") as tf:
+            tf.extractall(path=extract_dir)
+        # Mark ready so subsequent jobs on the same VM skip the download.
+        open(marker_path, "w").write("ready")
+        # Free disk by deleting the tarball now that it's extracted.
+        try:
+            _os.unlink(local_tar)
+        except OSError:
+            pass
+
+    # Find the language directory (cv-corpus-X/lt/ or similar)
+    # Walk extract_dir looking for a test.tsv.
+    tsv_path = None
+    lang_dir = None
+    for root, _dirs, files in _os.walk(extract_dir):
+        if spec.split + ".tsv" in files:
+            tsv_path = _os.path.join(root, spec.split + ".tsv")
+            lang_dir = root
+            break
+    if not tsv_path:
+        raise RuntimeError(f"Could not find {spec.split}.tsv under {extract_dir}")
+
+    clips_dir = _os.path.join(lang_dir, "clips")
+
+    n = 0
+    with open(tsv_path, newline="", encoding="utf-8") as f:
+        reader = _csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            if sample_cap > 0 and n >= sample_cap:
+                break
+            clip_name = row.get("path") or ""
+            sentence = row.get("sentence") or row.get("sentence_raw") or ""
+            if not clip_name or not sentence.strip():
+                continue
+            clip_path = _os.path.join(clips_dir, clip_name)
+            if not _os.path.exists(clip_path):
+                continue
+            try:
+                audio, _sr = librosa.load(clip_path, sr=16000, mono=True)
+            except Exception:
+                continue
+            if audio is None or len(audio) == 0:
+                continue
+            duration = float(len(audio) / 16000.0)
+            yield (clip_name, np.asarray(audio, dtype="float32"), sentence, duration)
+            n += 1
+
+
 def _common_voice_22_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSample]:
     """Custom loader for fsicoli/common_voice_22_0.
 
@@ -400,6 +499,23 @@ DATASETS: dict[str, DatasetSpec] = {
         default_cap=300,
         language="lithuanian",
         description="Common Voice 22 — Lithuanian. Crowd-sourced read speech.",
+    ),
+    "common_voice_25_lt": DatasetSpec(
+        key="common_voice_25_lt",
+        # Points at a GCS tarball — loader fetches + extracts it on the VM.
+        # Full corpus: gs://safecare-maps-speechbench/corpora/cv25-lt/cv-corpus-25.0-2026-03-09-lt.tar.gz
+        # Test-only (faster): gs://safecare-maps-speechbench/corpora/cv25-lt/test.tar.gz
+        hf_dataset="gs://safecare-maps-speechbench/corpora/cv25-lt/test.tar.gz",
+        hf_config=None,
+        split="test",
+        text_field="sentence",
+        default_cap=300,
+        language="lithuanian",
+        trust_remote_code=False,
+        loader=lambda spec, cap: _gcs_common_voice_tar_loader(spec, cap),
+        description="Common Voice 25 — Lithuanian (2026-03-09 release). Sourced directly from the "
+                    "Mozilla Data Collective tarball, mirrored in GCS at the bucket's corpora/ prefix. "
+                    "Test split has 5,644 clips.",
     ),
 }
 
