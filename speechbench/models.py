@@ -491,7 +491,11 @@ class Gemma4AudioModel(ASRModel):
         "Transcribe the audio{lang_hint} exactly as spoken. "
         "Output only the transcription, no preamble or commentary."
     )
-    CHUNK_SECONDS = 28.0
+    # Smaller chunks keep per-forward activation memory under ~4 GB on T4
+    # (16 GB VRAM). At 28s the E4B variant OOMs on longer-than-average clips
+    # (observed on Lithuanian FLEURS + CV22): the model weights are ~10 GB and
+    # each forward needs ~5 GB of activations, which exceeds T4 capacity.
+    CHUNK_SECONDS = 16.0
     OVERLAP_SECONDS = 0.5
 
     def __init__(self, spec: ModelSpec):
@@ -570,6 +574,14 @@ class Gemma4AudioModel(ASRModel):
             )
         gen = out_ids[:, inputs["input_ids"].shape[1] :]
         text = self._processor.batch_decode(gen, skip_special_tokens=True)[0]
+        # Free per-chunk activation memory so successive chunks don't pile up
+        # on the 16 GB T4 VRAM.
+        del inputs, out_ids, gen
+        try:
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
         return text.strip()
 
     def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:

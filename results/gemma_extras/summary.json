@@ -1,0 +1,103 @@
+{
+  "run_id": "gemma_extras",
+  "bucket": "safecare-maps-speechbench",
+  "num_results": 12,
+  "datasets": [
+    "common_voice_22_en",
+    "common_voice_22_es",
+    "common_voice_22_lt",
+    "fleurs_es",
+    "fleurs_lt",
+    "voxpopuli_lt"
+  ],
+  "models": [
+    "gemma-4-E2B-it",
+    "gemma-4-E4B-it"
+  ],
+  "best_per_dataset": {
+    "fleurs_es": {
+      "best_wer": {
+        "model": "gemma-4-E4B-it",
+        "wer": 0.03717472118959108
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E2B-it",
+        "rtfx_mean": 4.555993203708227
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 38.0
+      }
+    },
+    "common_voice_22_en": {
+      "best_wer": {
+        "model": "gemma-4-E4B-it",
+        "wer": 0.12941176470588237
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E2B-it",
+        "rtfx_mean": 5.306653792235574
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 26.0
+      }
+    },
+    "common_voice_22_es": {
+      "best_wer": {
+        "model": "gemma-4-E4B-it",
+        "wer": 0.17966101694915254
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E2B-it",
+        "rtfx_mean": 5.129666561268498
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 2.0
+      }
+    },
+    "fleurs_lt": {
+      "best_wer": {
+        "model": "gemma-4-E4B-it",
+        "wer": 0.3781021897810219
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E2B-it",
+        "rtfx_mean": 3.021740892720515
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "common_voice_22_lt": {
+      "best_wer": {
+        "model": "gemma-4-E2B-it",
+        "wer": 0.6255924170616114
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E2B-it",
+        "rtfx_mean": 3.873106133963801
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "voxpopuli_lt": {
+      "best_wer": {
+        "model": "gemma-4-E4B-it",
+        "wer": 0.4228094575799722
+      },
+      "fastest_rtfx": {
+        "model": "gemma-4-E2B-it",
+        "rtfx_mean": 2.939610378189117
+      },
+      "smallest_gpu": {
+        "model": "gemma-4-E2B-it",
+        "gpu_peak_mem_mb": 0.0
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-08T23:24:07Z",
+  "generated_at": "2026-04-09T03:36:48Z",
   "source_repo": "https://github.com/jasontitus/speechbench",
   "hardware": "GCP spot Tesla T4 (n1-standard-8, 30 GB RAM)",
   "project": "safecare-maps",
@@ -2292,6 +2292,40 @@
             "wall_time_s": 8.254074573516846,
             "model_id": "openai/whisper-small.en",
             "model_url": "https://huggingface.co/openai/whisper-small.en"
+          },
+          {
+            "model_key": "gemma-4-E2B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.1568627450980392,
+            "cer": 0.08620689655172414,
+            "rtfx_mean": 5.306653792235574,
+            "rtfx_p50": 5.2122452257471465,
+            "rtfx_p10": 3.6557079741309386,
+            "latency_ms_mean": 1029.8851013183594,
+            "latency_ms_p90": 1534.5376253128052,
+            "gpu_peak_mem_mb": 26.0,
+            "wall_time_s": 51.86012601852417,
+            "model_id": "google/gemma-4-E2B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
+          },
+          {
+            "model_key": "gemma-4-E4B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.12941176470588237,
+            "cer": 0.0727136431784108,
+            "rtfx_mean": 0.30373690731300923,
+            "rtfx_p50": 0.25724382196700146,
+            "rtfx_p10": 0.17924138183972282,
+            "latency_ms_mean": 19701.05250676473,
+            "latency_ms_p90": 32110.427498817444,
+            "gpu_peak_mem_mb": 5486.0,
+            "wall_time_s": 613.713093996048,
+            "model_id": "google/gemma-4-E4B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           }
         ]
       },
@@ -2890,6 +2924,40 @@
             "wall_time_s": 4.416075944900513,
             "model_id": "nvidia/parakeet-tdt-0.6b-v3",
             "model_url": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3"
+          },
+          {
+            "model_key": "gemma-4-E2B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.18305084745762712,
+            "cer": 0.10858895705521472,
+            "rtfx_mean": 5.129666561268498,
+            "rtfx_p50": 4.8265646524666295,
+            "rtfx_p10": 3.7938596726781926,
+            "latency_ms_mean": 1230.4963032404582,
+            "latency_ms_p90": 1756.4876079559326,
+            "gpu_peak_mem_mb": 2.0,
+            "wall_time_s": 41.02737307548523,
+            "model_id": "google/gemma-4-E2B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
+          },
+          {
+            "model_key": "gemma-4-E4B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.17966101694915254,
+            "cer": 0.10736196319018405,
+            "rtfx_mean": 0.32109461604714085,
+            "rtfx_p50": 0.24334868958602146,
+            "rtfx_p10": 0.1906459381403176,
+            "latency_ms_mean": 23341.531070073444,
+            "latency_ms_p90": 35237.49620914459,
+            "gpu_peak_mem_mb": 5406.0,
+            "wall_time_s": 704.6862323284149,
+            "model_id": "google/gemma-4-E4B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           }
         ],
         "fleurs_es": [
@@ -3062,6 +3130,40 @@
             "wall_time_s": 17.978435516357422,
             "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
+          },
+          {
+            "model_key": "gemma-4-E2B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.04956629491945477,
+            "cer": 0.025940640336527227,
+            "rtfx_mean": 4.555993203708227,
+            "rtfx_p50": 4.375729007706248,
+            "rtfx_p10": 3.877973099520963,
+            "latency_ms_mean": 2579.356869061788,
+            "latency_ms_p90": 3382.6231002807617,
+            "gpu_peak_mem_mb": 38.0,
+            "wall_time_s": 79.66479706764221,
+            "model_id": "google/gemma-4-E2B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
+          },
+          {
+            "model_key": "gemma-4-E4B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.03717472118959108,
+            "cer": 0.014021967749474177,
+            "rtfx_mean": 0.21977427941529523,
+            "rtfx_p50": 0.21155231774185446,
+            "rtfx_p10": 0.1893987207139772,
+            "latency_ms_mean": 54594.535644849144,
+            "latency_ms_p90": 72282.72423744202,
+            "gpu_peak_mem_mb": 5466.0,
+            "wall_time_s": 1643.5225114822388,
+            "model_id": "google/gemma-4-E4B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           }
         ]
       },
@@ -3246,6 +3348,40 @@
             "wall_time_s": 80.22478008270264,
             "model_id": "openai/whisper-medium",
             "model_url": "https://huggingface.co/openai/whisper-medium"
+          },
+          {
+            "model_key": "gemma-4-E4B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.3781021897810219,
+            "cer": 0.11641025641025642,
+            "rtfx_mean": 0.13211718806427714,
+            "rtfx_p50": 0.1312449490324032,
+            "rtfx_p10": 0.10775612624101456,
+            "latency_ms_mean": 83477.80106067657,
+            "latency_ms_p90": 122875.66587924957,
+            "gpu_peak_mem_mb": 5520.0,
+            "wall_time_s": 2525.7316043376923,
+            "model_id": "google/gemma-4-E4B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
+          },
+          {
+            "model_key": "gemma-4-E2B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.4291970802919708,
+            "cer": 0.14564102564102563,
+            "rtfx_mean": 3.021740892720515,
+            "rtfx_p50": 2.9335137626960224,
+            "rtfx_p10": 2.5179974988106477,
+            "latency_ms_mean": 3631.361508369446,
+            "latency_ms_p90": 5428.265976905823,
+            "gpu_peak_mem_mb": 0.0,
+            "wall_time_s": 111.08219075202942,
+            "model_id": "google/gemma-4-E2B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
           }
         ],
         "common_voice_22_lt": [
@@ -3418,6 +3554,40 @@
             "wall_time_s": 18.04890513420105,
             "model_id": "openai/whisper-large-v3-turbo",
             "model_url": "https://huggingface.co/openai/whisper-large-v3-turbo"
+          },
+          {
+            "model_key": "gemma-4-E2B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.6255924170616114,
+            "cer": 0.22316602316602316,
+            "rtfx_mean": 3.873106133963801,
+            "rtfx_p50": 3.75848209600222,
+            "rtfx_p10": 3.0189405613029305,
+            "latency_ms_mean": 1340.5242681503296,
+            "latency_ms_p90": 1860.3780031204226,
+            "gpu_peak_mem_mb": 0.0,
+            "wall_time_s": 41.79555034637451,
+            "model_id": "google/gemma-4-E2B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
+          },
+          {
+            "model_key": "gemma-4-E4B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.6255924170616114,
+            "cer": 0.20617760617760617,
+            "rtfx_mean": 0.18005435469831269,
+            "rtfx_p50": 0.17482386936379474,
+            "rtfx_p10": 0.12454469892357208,
+            "latency_ms_mean": 29437.35126654307,
+            "latency_ms_p90": 43359.16459560394,
+            "gpu_peak_mem_mb": 5452.0,
+            "wall_time_s": 884.7889263629913,
+            "model_id": "google/gemma-4-E4B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           }
         ],
         "voxpopuli_lt": [
@@ -3590,6 +3760,40 @@
             "wall_time_s": 23.176724672317505,
             "model_id": "openai/whisper-tiny",
             "model_url": "https://huggingface.co/openai/whisper-tiny"
+          },
+          {
+            "model_key": "gemma-4-E2B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.48261474269819193,
+            "cer": 0.24856156501726123,
+            "rtfx_mean": 2.939610378189117,
+            "rtfx_p50": 2.861777065384708,
+            "rtfx_p10": 2.4231090832485416,
+            "latency_ms_mean": 3633.8891983032227,
+            "latency_ms_p90": 5407.43718147278,
+            "gpu_peak_mem_mb": 0.0,
+            "wall_time_s": 110.28380513191223,
+            "model_id": "google/gemma-4-E2B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E2B-it"
+          },
+          {
+            "model_key": "gemma-4-E4B-it",
+            "backend": "transformers",
+            "family": "gemma",
+            "n": 30,
+            "wer": 0.4228094575799722,
+            "cer": 0.21311852704257767,
+            "rtfx_mean": 0.1368834345508718,
+            "rtfx_p50": 0.12953296117729013,
+            "rtfx_p10": 0.10936193433109527,
+            "latency_ms_mean": 79419.02228991191,
+            "latency_ms_p90": 128768.49558353426,
+            "gpu_peak_mem_mb": 5472.0,
+            "wall_time_s": 2407.3299973011017,
+            "model_id": "google/gemma-4-E4B-it",
+            "model_url": "https://huggingface.co/google/gemma-4-E4B-it"
           }
         ]
       },
