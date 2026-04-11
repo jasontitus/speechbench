@@ -129,7 +129,7 @@ def _gcs_common_voice_tar_loader(spec: DatasetSpec, sample_cap: int) -> Iterator
     # Walk extract_dir looking for a test.tsv.
     tsv_path = None
     lang_dir = None
-    for root, _dirs, files in _os.walk(extract_dir):
+    for root, _dirs, files in _os.walk(extract_dir, followlinks=True):
         if spec.split + ".tsv" in files:
             tsv_path = _os.path.join(root, spec.split + ".tsv")
             lang_dir = root

@@ -1,10 +1,16 @@
-# Lessons from fine-tuning parakeet-tdt-0.6b-v3 on Lithuanian
+# Lessons from fine-tuning parakeet-tdt-0.6b-v3 on Lithuanian (part 1)
 
 This document captures issues found while building a Lithuanian
 fine-tuning pipeline on top of speechbench. Written from
 `~/experiments/finetuneparakeet/` (Tier 1 smoke run on L4 spot,
 2026-04-09). The Lithuanian-specific analysis lives there; what
 follows is what's actionable *in speechbench itself*.
+
+**➡ See also: `lessons_from_finetuning_working_recipe.md`** —
+the second-round lessons after the initial runs failed. That file
+documents the working recipe (16.53% → 11.23% WER), the BatchNorm
+root cause of catastrophic forgetting, token-level LM gotcha,
+and the full copy-paste training recipe.
 
 ## TL;DR
 

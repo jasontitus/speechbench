@@ -746,6 +746,8 @@ _register(
         _parakeet("parakeet-ctc-1.1b", "nvidia/parakeet-ctc-1.1b", 5, 0.008, 60),
         _parakeet("parakeet-ctc-0.6b", "nvidia/parakeet-ctc-0.6b", 4, 0.006, 50),
         _parakeet("parakeet-tdt_ctc-110m", "nvidia/parakeet-tdt_ctc-110m", 2, 0.005, 30),
+        # Fine-tunes of parakeet-tdt-0.6b-v3 on specific languages
+        _parakeet("parakeet-tdt-lt", "sliderforthewin/parakeet-tdt-lt", 4, 0.010, 50),
         # Qwen3-ASR
         ModelSpec(
             key="qwen3-asr-0.6b",
