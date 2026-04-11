@@ -1,0 +1,11 @@
+{
+  "run_id": "ltft300",
+  "jobs": [
+    {
+      "job_id": "04816a7cde5e",
+      "model_key": "parakeet-tdt-lt",
+      "dataset_key": "common_voice_25_lt",
+      "sample_cap": 300
+    }
+  ]
+}

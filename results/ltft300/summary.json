@@ -1,0 +1,82 @@
+{
+  "run_id": "ltft300",
+  "bucket": "/tmp/speechbench/results/ltft300",
+  "num_results": 44,
+  "datasets": [
+    "common_voice_22_lt",
+    "common_voice_25_lt",
+    "fleurs_lt",
+    "voxpopuli_lt"
+  ],
+  "models": [
+    "fw-large-v3",
+    "fw-large-v3-turbo",
+    "parakeet-tdt-0.6b-v3",
+    "parakeet-tdt-lt",
+    "whisper-base",
+    "whisper-large-v2",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "whisper-medium",
+    "whisper-small",
+    "whisper-tiny"
+  ],
+  "best_per_dataset": {
+    "voxpopuli_lt": {
+      "best_wer": {
+        "model": "fw-large-v3",
+        "wer": 0.2890243902439024
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-lt",
+        "rtfx_mean": 130.27962813823757
+      },
+      "smallest_gpu": {
+        "model": "whisper-small",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "common_voice_25_lt": {
+      "best_wer": {
+        "model": "parakeet-tdt-lt",
+        "wer": 0.15804597701149425
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-lt",
+        "rtfx_mean": 80.39663038507646
+      },
+      "smallest_gpu": {
+        "model": "parakeet-tdt-lt",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "fleurs_lt": {
+      "best_wer": {
+        "model": "parakeet-tdt-lt",
+        "wer": 0.20067014147431125
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-lt",
+        "rtfx_mean": 144.25198551368496
+      },
+      "smallest_gpu": {
+        "model": "whisper-medium",
+        "gpu_peak_mem_mb": 0.0
+      }
+    },
+    "common_voice_22_lt": {
+      "best_wer": {
+        "model": "parakeet-tdt-lt",
+        "wer": 0.14531173294059893
+      },
+      "fastest_rtfx": {
+        "model": "parakeet-tdt-lt",
+        "rtfx_mean": 78.3126232259285
+      },
+      "smallest_gpu": {
+        "model": "whisper-large-v3",
+        "gpu_peak_mem_mb": 0.0
+      }
+    }
+  }
+}
