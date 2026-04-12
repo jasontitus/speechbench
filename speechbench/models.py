@@ -160,6 +160,9 @@ class HFWhisperModel(ASRModel):
         # English-only Whisper variants (".en") reject `language`/`task` kwargs.
         is_english_only = self.spec.hf_id.endswith(".en")
         gen_kwargs = {} if is_english_only else {"language": language, "task": "transcribe"}
+        # Beam search if configured in the ModelSpec.
+        if self.spec.beam_size > 0:
+            gen_kwargs["num_beams"] = self.spec.beam_size
         out = self._pipe(
             {"array": audio, "sampling_rate": sample_rate},
             generate_kwargs=gen_kwargs,
@@ -358,10 +361,11 @@ class FasterWhisperModel(ASRModel):
             "dutch": "nl",
             "polish": "pl",
         }.get(language, language[:2] if len(language) >= 2 else "en")
+        bsz = self.spec.beam_size if self.spec.beam_size > 0 else 5
         segments, _info = self._model.transcribe(
             audio,
             language=lang_code,
-            beam_size=5,
+            beam_size=bsz,
             vad_filter=False,
         )
         return " ".join(seg.text.strip() for seg in segments).strip()
@@ -810,6 +814,15 @@ _register(
         _parakeet("parakeet-ctc-1.1b", "nvidia/parakeet-ctc-1.1b", 5, 0.008, 60),
         _parakeet("parakeet-ctc-0.6b", "nvidia/parakeet-ctc-0.6b", 4, 0.006, 50),
         _parakeet("parakeet-tdt_ctc-110m", "nvidia/parakeet-tdt_ctc-110m", 2, 0.005, 30),
+        # Whisper beam=5 variants (fair comparison with beam+LM parakeet)
+        ModelSpec(key="whisper-large-v3+beam5", family="whisper", backend="transformers",
+                  hf_id="openai/whisper-large-v3", min_vram_gb=8,
+                  sec_per_audio_sec=0.15, load_seconds=60, beam_size=5,
+                  description="Whisper large-v3 + beam=5"),
+        ModelSpec(key="whisper-large-v3-turbo+beam5", family="whisper", backend="transformers",
+                  hf_id="openai/whisper-large-v3-turbo", min_vram_gb=8,
+                  sec_per_audio_sec=0.07, load_seconds=60, beam_size=5,
+                  description="Whisper large-v3-turbo + beam=5"),
         # Fine-tunes of parakeet-tdt-0.6b-v3 on specific languages
         _parakeet("parakeet-tdt-lt", "sliderforthewin/parakeet-tdt-lt", 4, 0.010, 50),
         # Beam+LM variants — same model, different decoding strategies
