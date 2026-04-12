@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #151b23;
+    --panel-2: #1c232e;
+    --border: #2a333f;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --accent-2: #79c0ff;
+    --green: #56d364;
+    --red: #f85149;
+    --orange: #f0883e;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #fafbfc;
+      --panel: #ffffff;
+      --panel-2: #f6f8fa;
+      --border: #d0d7de;
+      --text: #1f2328;
+      --text-dim: #656d76;
+      --accent: #0969da;
+      --accent-2: #0550ae;
+      --green: #1a7f37;
+      --red: #cf222e;
+      --orange: #bc4c00;
+    }
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  header {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 16px 24px;
+  }
+  header h1 {
+    margin: 0 0 6px 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header .tagline {
+    color: var(--text-dim);
+    font-size: 16px;
+    margin-bottom: 18px;
+  }
+  header .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px 24px;
+    color: var(--text-dim);
+    font-size: 13px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 10px;
+  }
+  header .meta strong { color: var(--text); font-weight: 600; }
+  .lang-switch {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--panel);
+    margin: 16px 0 0 0;
+  }
+  .lang-switch button {
+    background: transparent;
+    border: 0;
+    color: var(--text-dim);
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lang-switch button:not(:last-child) {
+    border-right: 1px solid var(--border);
+  }
+  .lang-switch button.active {
+    background: var(--panel-2);
+    color: var(--text);
+  }
+  .lang-switch button:hover:not(.active) { color: var(--text); }
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 64px 24px;
+  }
+  section.dataset {
+    margin: 36px 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  section.dataset header.ds-header {
+    padding: 20px 22px 14px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  section.dataset h2 {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  section.dataset h2 .ds-key {
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 13px;
+    margin-left: 10px;
+    font-weight: 400;
+  }
+  section.dataset .ds-desc {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 4px 0 0 0;
+  }
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 9px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  th:first-child, td:first-child { padding-left: 22px; }
+  th:last-child, td:last-child { padding-right: 22px; }
+  th {
+    background: var(--panel-2);
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  th:hover { color: var(--text); }
+  th.sort-asc::after { content: " ↑"; color: var(--accent); }
+  th.sort-desc::after { content: " ↓"; color: var(--accent); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+  td.model { font-family: var(--mono); font-size: 12px; }
+  tbody tr:hover { background: var(--panel-2); }
+  tbody tr.best td.num.wer { color: var(--green); font-weight: 600; }
+  tbody tr.hallucinate td.num.wer { color: var(--red); font-weight: 600; }
+  .backend-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    margin-left: 6px;
+  }
+  .backend-tag.nemo { color: #76e3c8; border-color: rgba(118, 227, 200, 0.3); }
+  .backend-tag.transformers { color: var(--accent-2); border-color: rgba(121, 192, 255, 0.3); }
+  .backend-tag.faster-whisper { color: var(--orange); border-color: rgba(240, 136, 62, 0.3); }
+  .backend-tag.dashscope-api { color: #bc8cff; border-color: rgba(188, 140, 255, 0.3); }
+  .empty-state {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--text-dim);
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    margin: 36px 0;
+  }
+  .empty-state h3 { color: var(--text); margin: 0 0 6px 0; }
+  footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--accent); }
+  .tips {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 14px 0 0 0;
+  }
+  .tips code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--panel-2);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  @media (max-width: 720px) {
+    header { padding: 28px 16px 12px 16px; }
+    header h1 { font-size: 24px; }
+    main { padding: 0 16px 48px 16px; }
+    th, td { padding: 8px 10px; font-size: 12px; }
+    th:first-child, td:first-child { padding-left: 14px; }
+    th:last-child, td:last-child { padding-right: 14px; }
+    section.dataset header.ds-header { padding: 16px; }
+    section.dataset h2 { font-size: 17px; }
+    section.dataset h2 .ds-key { display: block; margin: 2px 0 0 0; }
+  }
+</style>
+
+    <title>speechbench — English ASR benchmarks</title>
+    <meta name="description" content="Comparative benchmarks for speech-to-text models on English datasets. WER, CER, RTFx, latency, and GPU memory for Whisper, Parakeet, and more.">
+    <link rel="canonical" href="https://speechbench-viz.web.app/en/">
+    <meta property="og:title" content="speechbench — English">
+    <meta property="og:description" content="ASR model benchmarks for English: WER, CER, speed, and memory across 6 datasets.">
+    <meta property="og:url" content="https://speechbench-viz.web.app/en/">
+    <meta property="og:type" content="website">
+</head>
+<body>
+
+<header>
+  <h1>speechbench</h1>
+  <div class="tagline">
+    Cross-model ASR comparison — every model × every dataset × 30 clips, on a single GCP T4 spot VM.
+  </div>
+
+  <div class="meta">
+    <div>Hardware: <strong id="meta-hw">T4 spot</strong></div>
+    <div>Project: <strong id="meta-proj">safecare-maps</strong></div>
+    <div>Generated: <strong id="meta-gen">-</strong></div>
+    <div>Source: <strong><a id="meta-repo" href="https://github.com/jasontitus/speechbench">github.com/jasontitus/speechbench</a></strong></div>
+  </div>
+
+  <div id="lang-switch" class="lang-switch"><!-- populated by JS --></div>
+
+  <p class="tips">
+    Tables are sortable — click any column header. Green = best WER in the dataset. Red = hallucination (WER &gt; 100% means the model generated more output than the reference).
+    Model names link to their HuggingFace pages. Dataset titles link to their HF datasets.
+  </p>
+</header>
+
+<main id="main">
+  <!-- datasets populated by JS -->
+</main>
+
+<footer>
+  <p>
+    Generated by <a href="https://github.com/jasontitus/speechbench">speechbench</a>.
+    Each cell is <code>n=30</code> clips from the HuggingFace dataset's test split,
+    evaluated on a single <strong>NVIDIA T4</strong> spot VM
+    (<code>n1-standard-8</code>, 30 GB RAM) in <code>safecare-maps</code>.
+    Raw per-clip transcripts (with punctuation preserved) are in
+    <a href="https://github.com/jasontitus/speechbench/tree/main/results">results/</a> on GitHub.
+  </p>
+  <p>
+    WER is computed on Whisper-style normalized text (lowercase, punctuation stripped, contractions expanded) via <code>jiwer</code>.
+    RTFx = audio seconds / wall seconds — higher is faster than real-time.
+    GPU peak is measured via <code>pynvml</code> at 100ms intervals during inference.
+  </p>
+</footer>
+
+<script>
+const FMT_PCT = (x) => (x == null ? "" : (x * 100).toFixed(2) + "%");
+const FMT_NUM = (x) => (x == null ? "" : Number(x).toFixed(1));
+const FMT_INT = (x) => (x == null ? "" : Math.round(Number(x)).toString());
+
+const COLUMNS = [
+  { key: "model_key", label: "Model", type: "model" },
+  { key: "backend", label: "Backend", type: "backend" },
+  { key: "n", label: "n", type: "int" },
+  { key: "wer", label: "WER", type: "pct", cls: "wer" },
+  { key: "cer", label: "CER", type: "pct" },
+  { key: "rtfx_mean", label: "RTFx mean", type: "num" },
+  { key: "rtfx_p50", label: "RTFx p50", type: "num" },
+  { key: "latency_ms_mean", label: "Lat mean (ms)", type: "int" },
+  { key: "latency_ms_p90", label: "Lat p90 (ms)", type: "int" },
+  { key: "gpu_peak_mem_mb", label: "GPU peak (MB)", type: "int" },
+  { key: "wall_time_s", label: "Wall (s)", type: "int" },
+];
+
+function fmt(val, type) {
+  if (val == null || Number.isNaN(val)) return "";
+  switch (type) {
+    case "pct": return FMT_PCT(val);
+    case "num": return FMT_NUM(val);
+    case "int": return FMT_INT(val);
+    default: return String(val);
+  }
+}
+
+function buildTableRow(row, tbody, bestWer) {
+  const tr = document.createElement("tr");
+  if (bestWer != null && Math.abs(row.wer - bestWer) < 1e-9) tr.classList.add("best");
+  if (row.wer != null && row.wer > 1.0) tr.classList.add("hallucinate");
+  COLUMNS.forEach((col) => {
+    const td = document.createElement("td");
+    if (col.type === "model") {
+      td.className = "model";
+      if (row.model_url) {
+        const a = document.createElement("a");
+        a.href = row.model_url;
+        a.textContent = row.model_key;
+        a.target = "_blank"; a.rel = "noopener";
+        td.appendChild(a);
+      } else {
+        td.textContent = row.model_key;
+      }
+    } else if (col.type === "backend") {
+      const tag = document.createElement("span");
+      tag.className = `backend-tag ${row.backend}`;
+      tag.textContent = row.backend;
+      td.appendChild(tag);
+    } else {
+      td.className = "num" + (col.cls ? " " + col.cls : "");
+      td.textContent = fmt(row[col.key], col.type);
+    }
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+
+function buildDatasetSection(key, spec, rows) {
+  const section = document.createElement("section");
+  section.className = "dataset";
+
+  const header = document.createElement("header");
+  header.className = "ds-header";
+  const h2 = document.createElement("h2");
+  h2.innerHTML = `<a href="${spec.url}" target="_blank" rel="noopener">${spec.title}</a><span class="ds-key">${key}</span>`;
+  header.appendChild(h2);
+  const desc = document.createElement("p");
+  desc.className = "ds-desc";
+  desc.textContent = spec.description;
+  header.appendChild(desc);
+  section.appendChild(header);
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "table-scroll";
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const trh = document.createElement("tr");
+  COLUMNS.forEach((col, i) => {
+    const th = document.createElement("th");
+    th.textContent = col.label;
+    th.dataset.colIdx = i;
+    trh.appendChild(th);
+  });
+  thead.appendChild(trh);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  const valid = rows.filter(r => r.wer != null && r.wer <= 1.0);
+  const bestWer = valid.length ? Math.min(...valid.map(r => r.wer)) : null;
+  rows.forEach((row) => buildTableRow(row, tbody, bestWer));
+  table.appendChild(tbody);
+  tableWrap.appendChild(table);
+  section.appendChild(tableWrap);
+
+  thead.querySelectorAll("th").forEach((th) => {
+    th.addEventListener("click", () => {
+      const idx = parseInt(th.dataset.colIdx, 10);
+      const col = COLUMNS[idx];
+      const currentAsc = th.classList.contains("sort-asc");
+      thead.querySelectorAll("th").forEach((h) => h.classList.remove("sort-asc", "sort-desc"));
+      const ascending = !currentAsc;
+      th.classList.add(ascending ? "sort-asc" : "sort-desc");
+      rows.sort((a, b) => {
+        const av = a[col.key]; const bv = b[col.key];
+        if (av == null && bv == null) return 0;
+        if (av == null) return 1;
+        if (bv == null) return -1;
+        if (typeof av === "string" || typeof bv === "string") {
+          return ascending ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+        }
+        return ascending ? av - bv : bv - av;
+      });
+      tbody.innerHTML = "";
+      rows.forEach((row) => buildTableRow(row, tbody, bestWer));
+    });
+  });
+
+  return section;
+}
+
+let currentData = null;
+// Read language from URL hash (e.g. #lt, #es) so each language is linkable.
+let currentLang = "en";
+
+function render() {
+  const main = document.getElementById("main");
+  main.innerHTML = "";
+  const lang = currentData.languages[currentLang];
+  if (!lang || !lang.results || Object.keys(lang.results).length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.innerHTML = `<h3>No results yet for ${lang ? lang.label : currentLang}</h3><p>The sweep is either still running or hasn't been launched. Check back in a bit.</p>`;
+    main.appendChild(empty);
+    return;
+  }
+  for (const key of lang.dataset_order || Object.keys(lang.results)) {
+    const rows = lang.results[key];
+    if (!rows || !rows.length) continue;
+    const sorted = rows.slice().sort((a, b) => {
+      const aHallu = a.wer > 1.0 ? 1 : 0;
+      const bHallu = b.wer > 1.0 ? 1 : 0;
+      if (aHallu !== bHallu) return aHallu - bHallu;
+      return (a.wer ?? 99) - (b.wer ?? 99);
+    });
+    const spec = currentData.datasets[key] || { title: key, description: "", url: "#" };
+    main.appendChild(buildDatasetSection(key, spec, sorted));
+  }
+}
+
+function buildLangSwitch() {
+  const container = document.getElementById("lang-switch");
+  container.innerHTML = "";
+  const langs = Object.entries(currentData.languages);
+  for (const [code, lang] of langs) {
+    const btn = document.createElement("button");
+    btn.textContent = lang.label;
+    if (code === currentLang) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      currentLang = code;
+      history.replaceState(null, "", "#" + code);
+      document.title = `speechbench — ${lang.label}`;
+      buildLangSwitch();
+      render();
+    });
+    container.appendChild(btn);
+  }
+}
+
+async function main() {
+  try {
+    const resp = await fetch("results.json?t=" + Date.now());
+    currentData = await resp.json();
+    document.getElementById("meta-hw").textContent = currentData.hardware || "";
+    document.getElementById("meta-proj").textContent = currentData.project || "";
+    document.getElementById("meta-gen").textContent = currentData.generated_at || "";
+    document.getElementById("meta-repo").href = currentData.source_repo || "#";
+    // Validate the hash-derived lang against available languages
+    if (!currentData.languages[currentLang]) currentLang = "en";
+    history.replaceState(null, "", "#" + currentLang);
+    document.title = `speechbench — ${currentData.languages[currentLang]?.label || currentLang}`;
+    buildLangSwitch();
+    render();
+    // Handle browser back/forward
+    window.addEventListener("hashchange", () => {
+      const newLang = (location.hash || "").replace("#", "");
+      if (newLang && currentData.languages[newLang] && newLang !== currentLang) {
+        currentLang = newLang;
+        document.title = `speechbench — ${currentData.languages[currentLang]?.label || currentLang}`;
+        buildLangSwitch();
+        render();
+      }
+    });
+  } catch (e) {
+    document.getElementById("main").innerHTML = "<p style='color:var(--red)'>Failed to load results.json: " + e.message + "</p>";
+  }
+}
+main();
+</script>
+
+</body>
+</html>
