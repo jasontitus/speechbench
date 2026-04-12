@@ -401,7 +401,8 @@ function buildDatasetSection(key, spec, rows) {
 }
 
 let currentData = null;
-let currentLang = "en";
+// Read language from URL hash (e.g. #lt, #es) so each language is linkable.
+let currentLang = (location.hash || "").replace("#", "") || "en";
 
 function render() {
   const main = document.getElementById("main");
@@ -438,6 +439,8 @@ function buildLangSwitch() {
     if (code === currentLang) btn.classList.add("active");
     btn.addEventListener("click", () => {
       currentLang = code;
+      history.replaceState(null, "", "#" + code);
+      document.title = `speechbench — ${lang.label}`;
       buildLangSwitch();
       render();
     });
@@ -453,8 +456,22 @@ async function main() {
     document.getElementById("meta-proj").textContent = currentData.project || "";
     document.getElementById("meta-gen").textContent = currentData.generated_at || "";
     document.getElementById("meta-repo").href = currentData.source_repo || "#";
+    // Validate the hash-derived lang against available languages
+    if (!currentData.languages[currentLang]) currentLang = "en";
+    history.replaceState(null, "", "#" + currentLang);
+    document.title = `speechbench — ${currentData.languages[currentLang]?.label || currentLang}`;
     buildLangSwitch();
     render();
+    // Handle browser back/forward
+    window.addEventListener("hashchange", () => {
+      const newLang = (location.hash || "").replace("#", "");
+      if (newLang && currentData.languages[newLang] && newLang !== currentLang) {
+        currentLang = newLang;
+        document.title = `speechbench — ${currentData.languages[currentLang]?.label || currentLang}`;
+        buildLangSwitch();
+        render();
+      }
+    });
   } catch (e) {
     document.getElementById("main").innerHTML = "<p style='color:var(--red)'>Failed to load results.json: " + e.message + "</p>";
   }
