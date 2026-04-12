@@ -73,6 +73,14 @@ class ModelSpec:
     load_seconds: float = 60.0
     needs_dashscope_key: bool = False
     is_api: bool = False
+    # Optional beam+LM decoding config. If set, the model wrapper applies
+    # beam search with n-gram LM fusion after loading the model. The LM
+    # file is downloaded from the model's HF repo (lm_hf_filename) or
+    # loaded from a local path (lm_local_path).
+    beam_size: int = 0  # 0 = greedy (default)
+    lm_alpha: float = 0.5
+    lm_hf_filename: str = ""  # e.g. "lt_domain_5gram.arpa"
+    lm_local_path: str = ""  # fallback if HF download not available
 
 
 # ─── Base class (used at runtime on the VM) ────────────────────────────────────
@@ -385,6 +393,48 @@ class NeMoParakeetModel(ASRModel):
         except Exception:
             pass
 
+        # Apply beam+LM decoding if configured in the ModelSpec.
+        if self.spec.beam_size > 0:
+            self._apply_beam_lm()
+
+    def _apply_beam_lm(self) -> None:
+        """Switch from greedy to beam search + n-gram LM fusion."""
+        import copy
+        from omegaconf import open_dict  # type: ignore
+
+        # Resolve the LM file path: try local first, then download from HF.
+        lm_path = self.spec.lm_local_path
+        if not lm_path or not os.path.exists(lm_path):
+            if self.spec.lm_hf_filename:
+                try:
+                    from huggingface_hub import hf_hub_download  # type: ignore
+
+                    lm_path = hf_hub_download(
+                        self.spec.hf_id,
+                        self.spec.lm_hf_filename,
+                    )
+                    print(f"  downloaded LM: {self.spec.lm_hf_filename} → {lm_path}")
+                except Exception as e:
+                    print(f"  ! LM download failed: {e} — falling back to greedy")
+                    return
+            else:
+                print(f"  ! no LM path configured — staying greedy")
+                return
+
+        new_cfg = copy.deepcopy(self._model.cfg.decoding)
+        with open_dict(new_cfg):
+            new_cfg.strategy = "maes"  # TDT beam search
+            new_cfg.beam.beam_size = self.spec.beam_size
+            new_cfg.beam.return_best_hypothesis = True
+            new_cfg.beam.ngram_lm_model = str(lm_path)
+            new_cfg.beam.ngram_lm_alpha = self.spec.lm_alpha
+
+        self._model.change_decoding_strategy(new_cfg)
+        print(
+            f"  beam+LM: beam={self.spec.beam_size} alpha={self.spec.lm_alpha} "
+            f"lm={os.path.basename(str(lm_path))}"
+        )
+
     def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
         import soundfile as sf  # type: ignore
 
@@ -696,7 +746,17 @@ def _fw(key: str, ct2_id: str, vram: int, sec_per_s: float, load_s: float) -> Mo
     )
 
 
-def _parakeet(key: str, hf_id: str, vram: int, sec_per_s: float, load_s: float) -> ModelSpec:
+def _parakeet(key: str, hf_id: str, vram: int, sec_per_s: float, load_s: float,
+              beam_size: int = 0, lm_alpha: float = 0.5,
+              lm_hf_filename: str = "", lm_local_path: str = "",
+              description: str = "") -> ModelSpec:
+    if not description:
+        desc = f"NVIDIA NeMo Parakeet — {hf_id}"
+        if beam_size > 0:
+            lm_name = lm_hf_filename.replace(".arpa", "") if lm_hf_filename else "LM"
+            desc += f" + beam={beam_size} + {lm_name} α={lm_alpha}"
+    else:
+        desc = description
     return ModelSpec(
         key=key,
         family="parakeet",
@@ -705,7 +765,11 @@ def _parakeet(key: str, hf_id: str, vram: int, sec_per_s: float, load_s: float) 
         min_vram_gb=vram,
         sec_per_audio_sec=sec_per_s,
         load_seconds=load_s,
-        description=f"NVIDIA NeMo Parakeet — {hf_id}",
+        description=desc,
+        beam_size=beam_size,
+        lm_alpha=lm_alpha,
+        lm_hf_filename=lm_hf_filename,
+        lm_local_path=lm_local_path,
     )
 
 
@@ -748,6 +812,13 @@ _register(
         _parakeet("parakeet-tdt_ctc-110m", "nvidia/parakeet-tdt_ctc-110m", 2, 0.005, 30),
         # Fine-tunes of parakeet-tdt-0.6b-v3 on specific languages
         _parakeet("parakeet-tdt-lt", "sliderforthewin/parakeet-tdt-lt", 4, 0.010, 50),
+        # Beam+LM variants — same model, different decoding strategies
+        _parakeet("parakeet-tdt-lt+domain5gram",
+                  "sliderforthewin/parakeet-tdt-lt", 4, 0.040, 50,
+                  beam_size=4, lm_alpha=0.5, lm_hf_filename="lt_domain_5gram.arpa"),
+        _parakeet("parakeet-tdt-lt+europarl5gram",
+                  "sliderforthewin/parakeet-tdt-lt", 4, 0.040, 50,
+                  beam_size=4, lm_alpha=0.5, lm_hf_filename="lt_europarl_wiki_subs_5gram.arpa"),
         # Qwen3-ASR
         ModelSpec(
             key="qwen3-asr-0.6b",

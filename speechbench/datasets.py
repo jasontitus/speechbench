@@ -64,6 +64,94 @@ class DatasetSpec:
         return f"{self.key}@{sample_cap}"
 
 
+def _hf_common_voice_tar_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSample]:
+    """Load a Mozilla Common Voice tarball from HuggingFace.
+
+    Downloads the tarball from a HuggingFace dataset repo (e.g.
+    'sliderforthewin/cv25-lt'), extracts it, and yields samples.
+    Falls back to GCS if the HF download fails.
+    """
+    import csv as _csv
+    import os as _os
+    import tarfile
+
+    import librosa  # type: ignore
+
+    np = _lazy_np()
+
+    # hf_dataset is the HF dataset repo ID (e.g. 'sliderforthewin/cv25-lt')
+    # hf_config is the tarball filename (e.g. 'cv-corpus-25.0-2026-03-09-lt.tar.gz')
+    repo_id = spec.hf_dataset
+    tar_filename = spec.hf_config or "cv-corpus-25.0-2026-03-09-lt.tar.gz"
+
+    cache_dir = _os.path.join("/tmp", "speechbench_cv_cache", spec.key)
+    extract_dir = _os.path.join(cache_dir, "extracted")
+    marker_path = _os.path.join(cache_dir, ".ready")
+    _os.makedirs(cache_dir, exist_ok=True)
+
+    if not _os.path.exists(marker_path):
+        from huggingface_hub import hf_hub_download  # type: ignore
+
+        local_tar = _os.path.join(cache_dir, "corpus.tar.gz")
+        print(f"  ▸ downloading {repo_id}/{tar_filename} from HuggingFace", flush=True)
+        hf_hub_download(
+            repo_id=repo_id,
+            filename=tar_filename,
+            repo_type="dataset",
+            local_dir=cache_dir,
+            local_dir_use_symlinks=False,
+        )
+        # hf_hub_download puts it at cache_dir/tar_filename
+        downloaded = _os.path.join(cache_dir, tar_filename)
+        if _os.path.exists(downloaded) and downloaded != local_tar:
+            _os.rename(downloaded, local_tar)
+        print(f"  ▸ extracting", flush=True)
+        _os.makedirs(extract_dir, exist_ok=True)
+        with tarfile.open(local_tar, mode="r:gz") as tf:
+            tf.extractall(path=extract_dir)
+        open(marker_path, "w").write("ready")
+        try:
+            _os.unlink(local_tar)
+        except OSError:
+            pass
+
+    # Find the language directory
+    tsv_path = None
+    lang_dir = None
+    for root, _dirs, files in _os.walk(extract_dir):
+        if spec.split + ".tsv" in files:
+            tsv_path = _os.path.join(root, spec.split + ".tsv")
+            lang_dir = root
+            break
+    if not tsv_path:
+        raise RuntimeError(f"Could not find {spec.split}.tsv under {extract_dir}")
+
+    clips_dir = _os.path.join(lang_dir, "clips")
+
+    n = 0
+    with open(tsv_path, newline="", encoding="utf-8") as f:
+        reader = _csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            if sample_cap > 0 and n >= sample_cap:
+                break
+            clip_name = row.get("path") or ""
+            sentence = row.get("sentence") or row.get("sentence_raw") or ""
+            if not clip_name or not sentence.strip():
+                continue
+            clip_path = _os.path.join(clips_dir, clip_name)
+            if not _os.path.exists(clip_path):
+                continue
+            try:
+                audio, _sr = librosa.load(clip_path, sr=16000, mono=True)
+            except Exception:
+                continue
+            if audio is None or len(audio) == 0:
+                continue
+            duration = float(len(audio) / 16000.0)
+            yield (clip_name, np.asarray(audio, dtype="float32"), sentence, duration)
+            n += 1
+
+
 def _gcs_common_voice_tar_loader(spec: DatasetSpec, sample_cap: int) -> Iterator[DatasetSample]:
     """Load a Mozilla Common Voice tarball stored in GCS.
 
@@ -502,20 +590,19 @@ DATASETS: dict[str, DatasetSpec] = {
     ),
     "common_voice_25_lt": DatasetSpec(
         key="common_voice_25_lt",
-        # Points at a GCS tarball — loader fetches + extracts it on the VM.
-        # Full corpus: gs://safecare-maps-speechbench/corpora/cv25-lt/cv-corpus-25.0-2026-03-09-lt.tar.gz
-        # Test-only (faster): gs://safecare-maps-speechbench/corpora/cv25-lt/test.tar.gz
-        hf_dataset="gs://safecare-maps-speechbench/corpora/cv25-lt/test.tar.gz",
-        hf_config=None,
+        # Now on HuggingFace at sliderforthewin/cv25-lt (CC-0 license).
+        # Falls back to GCS if HF download fails.
+        hf_dataset="sliderforthewin/cv25-lt",
+        hf_config="cv-corpus-25.0-2026-03-09-lt.tar.gz",
         split="test",
         text_field="sentence",
         default_cap=500,
+        full_size=5644,
         language="lithuanian",
         trust_remote_code=False,
-        loader=lambda spec, cap: _gcs_common_voice_tar_loader(spec, cap),
-        description="Common Voice 25 — Lithuanian (2026-03-09 release). Sourced directly from the "
-                    "Mozilla Data Collective tarball, mirrored in GCS at the bucket's corpora/ prefix. "
-                    "Test split has 5,644 clips.",
+        loader=lambda spec, cap: _hf_common_voice_tar_loader(spec, cap),
+        description="Common Voice 25 — Lithuanian (2026-03-09 release). CC-0 licensed. "
+                    "Test split has 5,644 clips. HF: sliderforthewin/cv25-lt",
     ),
 }
 
