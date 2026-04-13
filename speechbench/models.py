@@ -665,16 +665,33 @@ class Gemma4AudioModel(ASRModel):
 
 
 class Gemma4LoRAModel(Gemma4AudioModel):
-    """Gemma 4 + PEFT LoRA adapter for fine-tuned ASR.
+    """Gemma 4 + PEFT LoRA adapter for fine-tuned ASR, with optional LM rescoring.
 
     Loads the base Gemma 4 model via the parent class, then applies a
     LoRA adapter from ``spec.adapter_id`` (HF repo or local path). The
     adapter is small (~140 MB) while the base model is ~8 GB, so the
     adapter can live on HuggingFace separately from the base weights.
 
+    When ``spec.lm_hf_filename`` is set, also loads a word-level n-gram
+    LM (Stupid Backoff, gzipped counts format from lt-asr-lm) and uses
+    sample-based rescoring in ``transcribe()``: generates 1 greedy +
+    N temperature samples, scores each with the LM, picks the best
+    combined (acoustic + alpha * LM) hypothesis.
+
+    This is a workaround for the upstream beam search bug in transformers
+    for Gemma 4 multimodal (audio_mask not expanded for num_beams > 1).
+
     Usage in speechbench:
-        speechbench run --models gemma-4-E4B-it-lt-asr --datasets common_voice_25_lt
+        speechbench run --models gemma-4-E4B-it-lt-asr-lm --datasets common_voice_25_lt
     """
+
+    NUM_SAMPLES = 8
+    TEMPERATURE = 0.5
+    TOP_P = 0.95
+
+    def __init__(self, spec: "ModelSpec"):
+        super().__init__(spec)
+        self._lm = None
 
     def load(self) -> None:
         super().load()
@@ -685,8 +702,265 @@ class Gemma4LoRAModel(Gemma4AudioModel):
         self._model = PeftModel.from_pretrained(
             self._model, self.spec.adapter_id
         )
-        # PeftModel wraps the base model; re-set to inference mode.
         self._model.train(False)
+
+        # Load the LM if configured.
+        if self.spec.lm_hf_filename:
+            self._load_lm()
+
+    def _load_lm(self) -> None:
+        """Download + load the word-level n-gram LM for rescoring."""
+        lm_path = self.spec.lm_local_path
+        if not lm_path or not os.path.exists(lm_path):
+            if self.spec.lm_hf_filename:
+                try:
+                    from huggingface_hub import hf_hub_download
+
+                    # LM lives in the corpora dataset repo, not the model repo.
+                    lm_path = hf_hub_download(
+                        "sliderforthewin/lt-asr-lm-corpora",
+                        self.spec.lm_hf_filename,
+                        repo_type="dataset",
+                    )
+                    print(f"  downloaded LM: {self.spec.lm_hf_filename} → {lm_path}")
+                except Exception as e:
+                    print(f"  ! LM download failed: {e} — staying greedy")
+                    return
+        self._lm = _StupidBackoffLM.load(lm_path)
+        print(
+            f"  LM loaded: order={self._lm.order} "
+            f"unigram_total={self._lm.unigram_total:,} alpha={self.spec.lm_alpha}"
+        )
+
+    def transcribe(self, audio, sample_rate: int = 16000, language: str = "english") -> str:
+        if self._lm is None:
+            # No LM — fall back to parent's greedy transcription.
+            return super().transcribe(audio, sample_rate, language)
+        return self._transcribe_with_lm_rescore(audio, sample_rate, language)
+
+    def _transcribe_with_lm_rescore(
+        self, audio, sample_rate: int, language: str
+    ) -> str:
+        """Sample-based n-best + Stupid Backoff LM rescoring."""
+        import torch
+        import unicodedata
+        import re
+
+        _multi_ws = re.compile(r"\\s+")
+
+        def _normalize(text):
+            if not text:
+                return ""
+            s = unicodedata.normalize("NFC", text).lower()
+            out = []
+            for ch in s:
+                if ch in (" ", "'", "\\t", "\\n"):
+                    out.append(ch)
+                    continue
+                cat = unicodedata.category(ch)
+                if cat and cat[0] in ("L", "N"):
+                    out.append(ch)
+                else:
+                    out.append(" ")
+            return _multi_ws.sub(" ", "".join(out)).strip()
+
+        chunk_len = int(self.CHUNK_SECONDS * sample_rate)
+        if len(audio) > chunk_len:
+            # For long audio, fall back to chunked greedy (rescoring across
+            # chunks is not straightforward).
+            return super().transcribe(audio, sample_rate, language)
+
+        lang_hint = f" in {language.capitalize()}" if language and language != "english" else ""
+        prompt = self.PROMPT_TEMPLATE.format(lang_hint=lang_hint)
+        conversation = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "audio", "audio": audio},
+                    {"type": "text", "text": prompt},
+                ],
+            }
+        ]
+        inputs = self._processor.apply_chat_template(
+            conversation,
+            tokenize=True,
+            add_generation_prompt=True,
+            return_dict=True,
+            return_tensors="pt",
+        )
+        inputs = {
+            k: (v.to(self._model.device) if hasattr(v, "to") else v)
+            for k, v in inputs.items()
+        }
+        input_len = inputs["input_ids"].shape[1]
+
+        candidates = []
+
+        # Greedy (deterministic floor).
+        with torch.inference_mode():
+            out = self._model.generate(
+                **inputs,
+                max_new_tokens=440,
+                do_sample=False,
+                return_dict_in_generate=True,
+                output_scores=True,
+            )
+        text = self._processor.batch_decode(
+            out.sequences[:, input_len:], skip_special_tokens=True
+        )[0].strip()
+        logits = torch.stack(out.scores, dim=1)
+        logprobs = torch.log_softmax(logits.float(), dim=-1)
+        T = logprobs.shape[1]
+        gathered = logprobs.gather(
+            -1, out.sequences[:, -T:].unsqueeze(-1)
+        ).squeeze(-1)
+        acoustic_lp = float(gathered[0].sum().item())
+        candidates.append((text, acoustic_lp))
+        del out, logits, logprobs, gathered
+
+        # Temperature samples (one at a time — beam/multi-return is broken).
+        for _ in range(self.NUM_SAMPLES):
+            with torch.inference_mode():
+                out = self._model.generate(
+                    **inputs,
+                    max_new_tokens=440,
+                    do_sample=True,
+                    temperature=self.TEMPERATURE,
+                    top_p=self.TOP_P,
+                    return_dict_in_generate=True,
+                    output_scores=True,
+                )
+            text = self._processor.batch_decode(
+                out.sequences[:, input_len:], skip_special_tokens=True
+            )[0].strip()
+            logits = torch.stack(out.scores, dim=1)
+            logprobs = torch.log_softmax(logits.float(), dim=-1)
+            T = logprobs.shape[1]
+            gathered = logprobs.gather(
+                -1, out.sequences[:, -T:].unsqueeze(-1)
+            ).squeeze(-1)
+            lp = float(gathered[0].sum().item())
+            candidates.append((text, lp))
+            del out, logits, logprobs, gathered
+
+        # Dedupe, score with LM, pick best.
+        best_map: dict[str, float] = {}
+        for text, lp in candidates:
+            if text not in best_map or lp > best_map[text]:
+                best_map[text] = lp
+
+        alpha = self.spec.lm_alpha
+        best_text = ""
+        best_score = float("-inf")
+        for text, acoustic_lp in best_map.items():
+            normalized = _normalize(text)
+            lm_lp, n_tok = self._lm.score(normalized)
+            lm_norm = lm_lp / max(n_tok, 1)
+            combined = acoustic_lp + alpha * lm_norm
+            if combined > best_score:
+                best_score = combined
+                best_text = text
+
+        # Free per-clip memory.
+        del inputs
+        try:
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
+
+        return best_text
+
+
+class _StupidBackoffLM:
+    """Minimal word-level n-gram LM with Stupid Backoff scoring.
+
+    Embedded in speechbench to avoid depending on the lt-asr-lm package.
+    Loads the gzipped text format produced by lt-asr-lm's build_lm.
+    """
+
+    ALPHA = 0.4
+
+    def __init__(self, order=4):
+        self.order = order
+        self.counters = [dict() for _ in range(order)]
+        self.unigram_total = 0
+
+    @classmethod
+    def load(cls, path):
+        import gzip as _gz
+
+        with _gz.open(path, "rt", encoding="utf-8") as f:
+            header = next(f).strip()
+            order_sizes = {}
+            for line in f:
+                line = line.rstrip("\\n")
+                if line == "":
+                    break
+                if line.startswith("#"):
+                    continue
+                if line.startswith("ngram "):
+                    k, _, v = line[6:].partition("=")
+                    order_sizes[int(k)] = int(v)
+            order = max(order_sizes) if order_sizes else 4
+            lm = cls(order=order)
+            cur = None
+            total_uni = 0
+            for line in f:
+                line = line.rstrip("\\n")
+                if not line:
+                    cur = None
+                    continue
+                if line.startswith("\\\\end\\\\"):
+                    break
+                if line.startswith("\\\\") and line.endswith("-grams:"):
+                    cur = int(line[1:].split("-", 1)[0])
+                    continue
+                if cur is None:
+                    continue
+                tab = line.find("\\t")
+                if tab < 0:
+                    continue
+                count = int(line[:tab])
+                gram = tuple(line[tab + 1:].split(" "))
+                lm.counters[cur - 1][gram] = count
+                if cur == 1:
+                    total_uni += count
+            lm.unigram_total = total_uni
+        return lm
+
+    def score(self, sentence):
+        import math
+
+        tokens = sentence.strip().split()
+        if not tokens:
+            return 0.0, 0
+        padded = ["<s>"] * (self.order - 1) + tokens + ["</s>"]
+        total = 0.0
+        n = 0
+        for i in range(self.order - 1, len(padded)):
+            ctx = tuple(padded[i - (self.order - 1): i])
+            tok = padded[i]
+            bp = 0.0
+            for k in range(min(len(ctx), self.order - 1), -1, -1):
+                c = ctx[len(ctx) - k:] if k > 0 else ()
+                gram = c + (tok,)
+                ct = self.counters[len(gram) - 1].get(gram, 0) if len(gram) <= self.order else 0
+                if ct > 0:
+                    if k == 0:
+                        total += bp + math.log(ct / max(self.unigram_total, 1))
+                    else:
+                        cc = self.counters[len(c) - 1].get(c, 0) if len(c) <= self.order else 0
+                        if cc == 0:
+                            bp += math.log(self.ALPHA)
+                            continue
+                        total += bp + math.log(ct / cc)
+                    break
+                bp += math.log(self.ALPHA)
+            else:
+                total += bp + math.log(1.0 / max(self.unigram_total, 1))
+            n += 1
+        return total, n
 
 
 # ─── DashScope Qwen3.5-Omni API ────────────────────────────────────────────────
@@ -942,7 +1216,7 @@ _register(
             load_seconds=70,
             description="Gemma 4 E2B-IT — multimodal LLM, prompt-based ASR",
         ),
-        # Gemma 4 + LoRA fine-tuned for Lithuanian ASR
+        # Gemma 4 + LoRA fine-tuned for Lithuanian ASR (greedy only)
         ModelSpec(
             key="gemma-4-E4B-it-lt-asr",
             family="gemma4",
@@ -952,7 +1226,21 @@ _register(
             min_vram_gb=12,
             sec_per_audio_sec=0.40,
             load_seconds=100,
-            description="Gemma 4 E4B-IT + Lithuanian ASR LoRA (WER 29.74% on CV25 LT)",
+            description="Gemma 4 E4B-IT + Lithuanian ASR LoRA (greedy)",
+        ),
+        # Gemma 4 + LoRA + 5-gram LM rescoring (sample-based, beam workaround)
+        ModelSpec(
+            key="gemma-4-E4B-it-lt-asr-lm",
+            family="gemma4",
+            backend="transformers",
+            hf_id="google/gemma-4-E4B-it",
+            adapter_id="sliderforthewin/gemma-4-E4B-it-lt-asr",
+            min_vram_gb=14,
+            sec_per_audio_sec=3.5,  # 9× slower than greedy (1 greedy + 8 samples)
+            load_seconds=120,
+            lm_hf_filename="lm/lt_5gram_full.counts.gz",
+            lm_alpha=1.0,
+            description="Gemma 4 E4B-IT + LT ASR LoRA + 5-gram LM α=1.0 (WER 29.74%)",
         ),
     ]
 )
