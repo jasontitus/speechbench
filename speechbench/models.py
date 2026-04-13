@@ -65,6 +65,9 @@ class ModelSpec:
     hf_id: str  # HF repo or remote model name
     min_vram_gb: int  # rough lower bound on GPU memory needed
     description: str = ""
+    # Optional PEFT adapter repo id or local path. When set, the model loader
+    # applies the adapter on top of the base model (hf_id) after loading.
+    adapter_id: str = ""
     # Static cost-model inputs (used by speechbench.cost):
     # rough wall seconds per *audio second* of input at FP16 on a T4.
     # 0.05 = 20× real-time. 1.0 = real-time. 2.0 = half real-time.
@@ -658,6 +661,34 @@ class Gemma4AudioModel(ASRModel):
         super().unload()
 
 
+# ─── Gemma 4 with LoRA adapter (fine-tuned ASR) ────────────────────────────────
+
+
+class Gemma4LoRAModel(Gemma4AudioModel):
+    """Gemma 4 + PEFT LoRA adapter for fine-tuned ASR.
+
+    Loads the base Gemma 4 model via the parent class, then applies a
+    LoRA adapter from ``spec.adapter_id`` (HF repo or local path). The
+    adapter is small (~140 MB) while the base model is ~8 GB, so the
+    adapter can live on HuggingFace separately from the base weights.
+
+    Usage in speechbench:
+        speechbench run --models gemma-4-E4B-it-lt-asr --datasets common_voice_25_lt
+    """
+
+    def load(self) -> None:
+        super().load()
+        if not self.spec.adapter_id:
+            return
+        from peft import PeftModel  # type: ignore
+
+        self._model = PeftModel.from_pretrained(
+            self._model, self.spec.adapter_id
+        )
+        # PeftModel wraps the base model; re-set to inference mode.
+        self._model.train(False)
+
+
 # ─── DashScope Qwen3.5-Omni API ────────────────────────────────────────────────
 
 
@@ -911,6 +942,18 @@ _register(
             load_seconds=70,
             description="Gemma 4 E2B-IT — multimodal LLM, prompt-based ASR",
         ),
+        # Gemma 4 + LoRA fine-tuned for Lithuanian ASR
+        ModelSpec(
+            key="gemma-4-E4B-it-lt-asr",
+            family="gemma4",
+            backend="transformers",
+            hf_id="google/gemma-4-E4B-it",
+            adapter_id="sliderforthewin/gemma-4-E4B-it-lt-asr",
+            min_vram_gb=12,
+            sec_per_audio_sec=0.40,
+            load_seconds=100,
+            description="Gemma 4 E4B-IT + Lithuanian ASR LoRA (WER 29.74% on CV25 LT)",
+        ),
     ]
 )
 
@@ -972,6 +1015,8 @@ def make_model(spec: ModelSpec) -> ASRModel:
 
     # Gemma 4 — HF Transformers everywhere; on Mac it falls back to MPS/CPU
     if spec.family == "gemma4":
+        if spec.adapter_id:
+            return Gemma4LoRAModel(spec)
         return Gemma4AudioModel(spec)
 
     # DashScope API models — work anywhere
